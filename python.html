@@ -22,7 +22,6 @@
     .font-mono-code {
       font-family: 'JetBrains Mono', monospace;
     }
-    /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 7px;
       height: 7px;
@@ -43,7 +42,6 @@
     .dark-scroll::-webkit-scrollbar-thumb:hover {
       background: #475569;
     }
-    /* Code editor line numbers sync */
     .editor-wrapper {
       display: flex;
       position: relative;
@@ -91,7 +89,7 @@
           <i class="fa-brands fa-python text-2xl text-white"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
               香港道教聯合會圓玄學院第二中學
             </span>
@@ -108,7 +106,7 @@
 
       <!-- Student Login & Progress Summary -->
       <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-        <!-- Student Identity Form / Pill -->
+        <!-- Student Identity Form -->
         <div id="studentBar" class="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-xl">
           <i class="fa-solid fa-user-graduate text-cyan-400 text-sm"></i>
           <select id="classSelect" aria-label="班別" class="bg-slate-900 text-white text-sm rounded-lg px-2 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400">
@@ -126,11 +124,11 @@
           </button>
         </div>
 
-        <!-- Student Stats Pills (Visible when logged in) -->
+        <!-- Student Stats Pills -->
         <div id="studentStatsBox" class="hidden items-center gap-2 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-xl text-xs sm:text-sm">
           <div class="flex items-center gap-1.5 pr-2 border-r border-slate-700">
             <span class="text-slate-400">完成：</span>
-            <span id="statSolved" class="font-bold text-emerald-400">0/24</span>
+            <span id="statSolved" class="font-bold text-emerald-400">0/69</span>
           </div>
           <div class="flex items-center gap-1.5 pr-2 border-r border-slate-700">
             <span class="text-slate-400">嘗試：</span>
@@ -150,13 +148,13 @@
 
         <!-- Mobile Problem Drawer Toggle -->
         <button onclick="toggleSidebar()" class="lg:hidden bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl border border-slate-700 text-sm">
-          <i class="fa-solid fa-list-check mr-1"></i>題庫
+          <i class="fa-solid fa-list-check mr-1"></i>題庫 (69)
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Login Reminder Banner (Shown if not logged in) -->
+  <!-- Login Reminder Banner -->
   <div id="loginReminderBanner" class="bg-indigo-600 text-white px-4 py-2 text-center text-xs sm:text-sm flex items-center justify-center gap-2 shadow-inner">
     <i class="fa-solid fa-circle-info"></i>
     <span>請先於右上角選擇你的<strong>班別（3A、3B、3C、3E）</strong>及<strong>學號（1–40）</strong>並按「登入紀錄」，系統將自動儲存你的完成進度、嘗試次數並更新至全級排行榜！</span>
@@ -171,24 +169,36 @@
         <div>
           <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <i class="fa-solid fa-book-open text-indigo-600"></i>
-            <span>課程變式題庫（共 24 題）</span>
+            <span>課程變式題庫（共 69 題）</span>
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">涵蓋第2課至第4課全部編程題型</p>
+          <p class="text-xs text-slate-500 mt-0.5">8 大單元各 8 題 + 5 題綜合挑戰</p>
         </div>
         <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600 p-1">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="px-3 py-2 bg-white border-b border-slate-100 flex gap-1.5 text-xs">
-        <button onclick="setProblemFilter('all')" id="filter-all" class="px-2.5 py-1 rounded-lg font-medium bg-indigo-600 text-white transition">全部 (24)</button>
-        <button onclick="setProblemFilter('unsolved')" id="filter-unsolved" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">未完成</button>
-        <button onclick="setProblemFilter('solved')" id="filter-solved" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">已通過</button>
+      <!-- Search & Filter Tabs -->
+      <div class="p-2.5 bg-white border-b border-slate-100 space-y-2">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input
+            type="text"
+            id="problemSearchInput"
+            oninput="handleProblemSearch(this.value)"
+            placeholder="搜尋題號或關鍵字（如：運費、階乘）..."
+            class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+        <div class="flex gap-1.5 text-xs">
+          <button onclick="setProblemFilter('all')" id="filter-all" class="flex-1 px-2 py-1 rounded-lg font-medium bg-indigo-600 text-white transition">全部 (69)</button>
+          <button onclick="setProblemFilter('unsolved')" id="filter-unsolved" class="flex-1 px-2 py-1 rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">未完成</button>
+          <button onclick="setProblemFilter('solved')" id="filter-solved" class="flex-1 px-2 py-1 rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">已完成</button>
+        </div>
       </div>
 
-      <!-- Problem Accordion List -->
-      <div id="problemListContainer" class="flex-1 overflow-y-auto p-2.5 space-y-3">
+      <!-- Collapsible Unit Accordion List -->
+      <div id="problemListContainer" class="flex-1 overflow-y-auto p-2.5 space-y-2.5">
         <!-- Populated by JS -->
       </div>
     </aside>
@@ -199,7 +209,7 @@
       <div class="p-4 bg-gradient-to-r from-slate-50 to-indigo-50/40 border-b border-slate-200">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
           <span id="probLessonTag" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
-            第2課：變數與算術運算
+            單元 1：算術運算與變數輸出
           </span>
           <div class="flex items-center gap-2">
             <span id="probAttemptBadge" class="text-xs font-medium px-2 py-0.5 rounded bg-slate-200/80 text-slate-700">
@@ -211,7 +221,7 @@
           </div>
         </div>
         <h2 id="probTitle" class="text-lg sm:text-xl font-bold text-slate-900">
-          題 2-1：計算四科總分與平均分
+          題 1-1：計算四科總分與平均分
         </h2>
         <p id="probOriginRef" class="text-xs text-slate-500 mt-1 flex items-center gap-1">
           <i class="fa-solid fa-link text-indigo-400"></i>
@@ -253,32 +263,33 @@
           </div>
         </div>
 
-        <!-- Progressive Hints Section (No direct answers!) -->
+        <!-- Progressive Hints Section -->
         <div class="border-t border-slate-100 pt-4">
           <div class="flex items-center justify-between mb-2.5">
             <h3 class="text-xs font-bold uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
               <i class="fa-solid fa-lightbulb"></i> 思考提示（不直接提供答案）
             </h3>
-            <button id="revealHintBtn" onclick="revealNextHint()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 border border-amber-300 transition flex items-center gap-1.5 shadow-sm">
+            <button id="revealHintBtn" onclick="revealNextHint()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-300 transition flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-wand-magic-sparkles"></i>
               <span id="revealHintBtnText">顯示提示 1 / 3</span>
             </button>
           </div>
+
           <div id="hintsContainer" class="space-y-2">
-            <p id="noHintPlaceholder" class="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-xl border border-dashed border-slate-200">
-              遇到困難嗎？點擊右上角「顯示提示」按鈕獲取循序漸進的解題方向。
-            </p>
+            <div id="noHintPlaceholder" class="text-xs text-slate-400 italic bg-slate-50 rounded-xl p-3 border border-dashed border-slate-200 text-center">
+              遇到困難時可點擊右上角「顯示提示」按鈕，系統會循序漸進引導你思考解題方向。
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Prev / Next Problem Navigation Footer -->
-      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-        <button id="prevProbBtn" onclick="navigateProblem(-1)" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition flex items-center gap-1.5">
+      <!-- Bottom Prev/Next Navigation -->
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2">
+        <button id="prevProbBtn" onclick="navigateProblem(-1)" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 disabled:opacity-40 transition flex items-center gap-1.5">
           <i class="fa-solid fa-chevron-left"></i> 上一題
         </button>
-        <span id="probCounterText" class="text-xs font-bold text-slate-500">1 / 24</span>
-        <button id="nextProbBtn" onclick="navigateProblem(1)" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition flex items-center gap-1.5">
+        <span id="probCounterText" class="text-xs font-medium text-slate-500">第 1 / 69 題</span>
+        <button id="nextProbBtn" onclick="navigateProblem(1)" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 disabled:opacity-40 transition flex items-center gap-1.5">
           下一題 <i class="fa-solid fa-chevron-right"></i>
         </button>
       </div>
@@ -287,7 +298,7 @@
     <!-- Right Column: Python Code Editor & Auto-Grader Console (5 cols on lg) -->
     <section class="lg:col-span-5 flex flex-col gap-4 lg:max-h-[calc(100vh-110px)]">
       <!-- Code Editor Card -->
-      <div class="flex-1 flex flex-col bg-slate-900 rounded-2xl shadow-md border border-slate-800 overflow-hidden min-h-[280px]">
+      <div class="flex-1 min-h-[280px] flex flex-col bg-slate-900 rounded-2xl shadow-md border border-slate-800 overflow-hidden">
         <!-- Editor Toolbar -->
         <div class="px-4 py-2.5 bg-slate-950 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2">
@@ -303,7 +314,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button onclick="resetCodeToTemplate()" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5" title="重設為預設程式碼框架">
+            <button onclick="resetCodeToTemplate()" class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5" title="重設為預設程式碼骨架">
               <i class="fa-solid fa-rotate-left"></i>
               <span>重設模板</span>
             </button>
@@ -332,7 +343,6 @@
       <!-- Auto-Grader Console & Test Cases Card -->
       <div class="h-[250px] sm:h-[270px] flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden shrink-0">
         <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-        <div class="px-4 py-2 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-terminal text-indigo-600 text-sm"></i>
             <h3 class="text-xs sm:text-sm font-bold text-slate-800">自動批改測試結果終端機</h3>
@@ -356,7 +366,7 @@
 
   <!-- Leaderboard Modal -->
   <div id="leaderboardModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
       <!-- Modal Header -->
       <div class="px-5 py-4 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -373,7 +383,7 @@
         </button>
       </div>
 
-      <!-- Filter & Export Bar -->
+      <!-- Filter & Protected Teacher Actions Bar -->
       <div class="px-5 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-1.5">
           <span class="text-xs font-semibold text-slate-500 mr-1">篩選班別：</span>
@@ -388,11 +398,13 @@
           <span id="syncModeTag" class="text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">
             <i class="fa-solid fa-database mr-1"></i>即時紀錄已啟用
           </span>
-          <button onclick="requestTeacherAuth('export')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white flex items-center gap-1.5 transition shadow-sm">
+          <button onclick="requestTeacherAuth('export')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white flex items-center gap-1.5 transition" title="需要教師密碼">
+            <i class="fa-solid fa-lock text-amber-400 text-[10px]"></i>
             <i class="fa-solid fa-file-csv"></i>
             <span>匯出成績 CSV</span>
           </button>
-          <button onclick="requestTeacherAuth('clear')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-1.5 transition shadow-sm">
+          <button onclick="requestTeacherAuth('clear')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-1.5 transition" title="需要教師密碼">
+            <i class="fa-solid fa-lock text-amber-200 text-[10px]"></i>
             <i class="fa-solid fa-trash-can"></i>
             <span>清除紀錄</span>
           </button>
@@ -407,7 +419,7 @@
               <th class="py-3 px-4 w-20 text-center">名次</th>
               <th class="py-3 px-4">班別</th>
               <th class="py-3 px-4">學號</th>
-              <th class="py-3 px-4">已完成題數 (滿分24)</th>
+              <th class="py-3 px-4">已完成題數 (滿分69)</th>
               <th class="py-3 px-4 text-center">總嘗試次數</th>
               <th class="py-3 px-4 text-right">最近更新時間</th>
             </tr>
@@ -430,47 +442,38 @@
 
   <!-- Teacher Password Verification Modal -->
   <div id="teacherAuthModal" class="fixed inset-0 z-[60] hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden">
       <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400">
-            <i class="fa-solid fa-lock"></i>
-          </div>
-          <div>
-            <h3 id="teacherAuthTitle" class="font-bold text-base">教師密碼驗證</h3>
-            <p class="text-xs text-slate-400">此操作僅限科任老師執行</p>
-          </div>
+          <i class="fa-solid fa-shield-halved text-amber-400"></i>
+          <h3 id="teacherAuthTitle" class="font-bold text-base">教師權限驗證</h3>
         </div>
-        <button onclick="closeTeacherAuthModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition">
+        <button onclick="closeTeacherAuthModal()" class="text-slate-400 hover:text-white">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-
       <div class="p-5 space-y-4">
         <p id="teacherAuthDesc" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          請輸入教師專用密碼以繼續操作：
+          此操作僅限老師使用，請輸入教師密碼以繼續：
         </p>
-
         <div>
-          <label for="teacherPasswordInput" class="block text-xs font-bold text-slate-700 mb-1.5">教師密碼</label>
           <input
             type="password"
             id="teacherPasswordInput"
-            placeholder="請輸入密碼..."
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
-            onkeydown="if(event.key === 'Enter') verifyTeacherPassword()"
+            placeholder="請輸入教師密碼..."
+            onkeydown="if(event.key === 'Enter') confirmTeacherAuth()"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
           />
-          <p id="teacherAuthError" class="hidden mt-2 text-xs font-semibold text-rose-600 flex items-center gap-1.5 bg-rose-50 border border-rose-200 px-3 py-2 rounded-lg">
+          <p id="teacherAuthError" class="hidden text-xs text-rose-600 font-semibold mt-1.5 flex items-center gap-1">
             <i class="fa-solid fa-circle-exclamation"></i>
-            <span>密碼錯誤！拒絕執行操作。</span>
+            <span>密碼錯誤，請重新輸入！</span>
           </p>
         </div>
-
-        <div class="flex items-center justify-end gap-2 pt-2">
-          <button onclick="closeTeacherAuthModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition">
+        <div class="flex items-center justify-end gap-2 pt-1">
+          <button onclick="closeTeacherAuthModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
             取消
           </button>
-          <button id="teacherAuthConfirmBtn" onclick="verifyTeacherPassword()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold shadow transition">
+          <button onclick="confirmTeacherAuth()" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow transition">
             確認執行
           </button>
         </div>
@@ -488,29 +491,25 @@
     import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     // =========================================================================
-    // 1. 完整 24 題題庫定義（涵蓋作業第2至第4課 8 個核心編程單元 × 每單元 3 題變式）
+    // 1. 完整 69 題題庫定義（單元 1–8 各 8 題不同情境變式 + 單元 9 共 5 題綜合挑戰）
     // =========================================================================
     const UNITS = [
       {
         unitId: "u1",
-        lesson: "第2課：變數、輸出與算術運算",
+        lesson: "單元 1：算術運算與變數輸出",
         origin: "延伸自第2課丙部第6題（計算平均分）",
         problems: [
           {
-            id: "2-1",
-            title: "題 2-1：計算四科總分與平均分",
-            description: `
-              <p>請編寫一個 Python 程式，讓使用者依序輸入四個科目的分數（整數）：中文 <code>chi</code>、英文 <code>eng</code>、數學 <code>math</code> 及電腦 <code>ict</code>。</p>
-              <p>程式需計算四科的<strong>總分</strong>與<strong>平均分</strong>，並分兩行嚴格按以下格式輸出：</p>
-              <p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">Total: &lt;總分&gt;<br>Average: &lt;平均分&gt;</p>
-            `,
+            id: "1-1",
+            title: "題 1-1：計算四科總分與平均分",
+            description: `<p>請依序輸入四個科目的分數（整數）：中文 <code>chi</code>、英文 <code>eng</code>、數學 <code>math</code> 及電腦 <code>ict</code>。</p><p>計算四科的<strong>總分</strong>與<strong>平均分</strong>，並分兩行嚴格按以下格式輸出：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">Total: &lt;總分&gt;<br>Average: &lt;平均分&gt;</p>`,
             sampleInput: "80\n75\n90\n85",
             sampleOutput: "Total: 330\nAverage: 82.5",
             starterCode: `chi = int(input())\neng = int(input())\nmath = int(input())\nict = int(input())\n\n# 請在下方計算總分與平均分並輸出\n`,
             hints: [
-              "提示 1（變數計算）：你可以使用 total = chi + eng + math + ict 計算總分，再用 total / 4 計算平均分。",
-              "提示 2（字串與數字輸出）：使用 print(\"Total:\", total) 會自動在冒號與數字之間加上一個空格，非常方便！",
-              "提示 3（注意大小寫）：請檢查輸出的英文字母大小寫是否與範例完全相同（Total: 與 Average:），不要多加其他提示文字。"
+              "提示 1：使用 total = chi + eng + math + ict 計算總分，再用 total / 4 計算平均分。",
+              "提示 2：使用 print(\"Total:\", total) 會自動在冒號與數字之間加上一個空格。",
+              "提示 3：檢查大小寫是否與範例完全一致（Total: 與 Average:）。"
             ],
             testCases: [
               { input: "80\n75\n90\n85", expected: "Total: 330\nAverage: 82.5", isPublic: true },
@@ -519,25 +518,16 @@
             ]
           },
           {
-            id: "2-2",
-            title: "題 2-2：購物找贖計算機",
-            description: `
-              <p>小食部需要一個找贖計算機。請讓使用者依序輸入三個整數：</p>
-              <ol class="list-decimal list-inside space-y-1 ml-1">
-                <li>商品單價 <code>price</code></li>
-                <li>購買數量 <code>qty</code></li>
-                <li>顧客付款金額 <code>paid</code></li>
-              </ol>
-              <p>計算應找回的金額（付款金額減去總貨款），並按以下格式輸出：</p>
-              <p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">Change: $&lt;找贖金額&gt;</p>
-            `,
+            id: "1-2",
+            title: "題 1-2：小食部購物找贖計算機",
+            description: `<p>請依序輸入三個整數：商品單價 <code>price</code>、購買數量 <code>qty</code> 及顧客付款金額 <code>paid</code>。</p><p>計算應找回的金額，並按以下格式輸出：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">Change: $&lt;找贖金額&gt;</p>`,
             sampleInput: "12\n3\n50",
             sampleOutput: "Change: $14",
             starterCode: `price = int(input())\nqty = int(input())\npaid = int(input())\n\n# 請計算找贖金額並按格式輸出\n`,
             hints: [
-              "提示 1（算術運算）：總貨款等於 price * qty，因此找贖金額 change = paid - price * qty。",
-              "提示 2（緊貼符號輸出）：注意範例輸出中 $ 與數字之間沒有空格（例如 $14），若用逗號分隔會多出空格。",
-              "提示 3（字串串聯）：可以使用 str(change) 將數字轉為字串，再用 \"Change: $\" + str(change) 連接輸出。"
+              "提示 1：找贖金額 change = paid - price * qty。",
+              "提示 2：範例輸出中 $ 與數字之間沒有空格（例如 $14）。",
+              "提示 3：可用 print(\"Change: $\" + str(change)) 連接輸出。"
             ],
             testCases: [
               { input: "12\n3\n50", expected: "Change: $14", isPublic: true },
@@ -546,80 +536,145 @@
             ]
           },
           {
-            id: "2-3",
-            title: "題 2-3：梯形面積計算器",
-            description: `
-              <p>在數學科中，梯形面積公式為：<span class="font-mono-code font-bold">(a + b) × h ÷ 2</span>。</p>
-              <p>請讓使用者依序輸入三個整數：上底 <code>a</code>、下底 <code>b</code> 及高 <code>h</code>，將代數式轉換為正確的 Python 表達式，並直接輸出計算出來的面積（保留 Python 除法預設的小數點格式）。</p>
-            `,
+            id: "1-3",
+            title: "題 1-3：梯形面積計算器",
+            description: `<p>梯形面積公式為：<span class="font-mono-code font-bold">(a + b) × h ÷ 2</span>。</p><p>請依序輸入三個整數：上底 <code>a</code>、下底 <code>b</code> 及高 <code>h</code>，直接輸出計算出來的面積。</p>`,
             sampleInput: "4\n6\n5",
             sampleOutput: "25.0",
-            starterCode: `a = int(input())\nb = int(input())\nh = int(input())\n\n# 請編寫梯形面積表達式並輸出結果\n`,
+            starterCode: `a = int(input())\nb = int(input())\nh = int(input())\n\n# 請計算梯形面積並輸出\n`,
             hints: [
-              "提示 1（運算優先次序）：在 Python 中乘除優於加減，必須用圓括號將上底加下底括起來：(a + b)。",
-              "提示 2（乘號不可省略）：代數式中的 (a+b)h 在 Python 必須明確寫出乘號 *，即 (a + b) * h / 2。",
-              "提示 3（直接輸出）：計算出 area 後，直接使用 print(area) 輸出數值即可。"
+              "提示 1：必須用圓括號將上底加下底括起來：(a + b)。",
+              "提示 2：在 Python 中乘號不可省略，寫成 (a + b) * h / 2。",
+              "提示 3：直接使用 print(area) 輸出計算結果。"
             ],
             testCases: [
               { input: "4\n6\n5", expected: "25.0", isPublic: true },
               { input: "3\n7\n4", expected: "20.0", isPublic: false },
               { input: "5\n8\n3", expected: "19.5", isPublic: false }
             ]
+          },
+          {
+            id: "1-4",
+            title: "題 1-4：烘焙坊蛋糕材料比例換算",
+            description: `<p>製作一個標準蛋糕需要 <code>flour</code> 克麵粉及 <code>sugar</code> 克砂糖。現在要製作 <code>cakes</code> 個蛋糕，請依序輸入三個整數 <code>flour</code>、<code>sugar</code>、<code>cakes</code>，分兩行輸出所需總材料：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">Flour: &lt;總麵粉&gt;g<br>Sugar: &lt;總砂糖&gt;g</p>`,
+            sampleInput: "250\n120\n3",
+            sampleOutput: "Flour: 750g\nSugar: 360g",
+            starterCode: `flour = int(input())\nsugar = int(input())\ncakes = int(input())\n\n# 請計算總麵粉與總砂糖克數\n`,
+            hints: [
+              "提示 1：總麵粉為 flour * cakes，總砂糖為 sugar * cakes。",
+              "提示 2：數字與單位 g 之間沒有空格，例如 750g。",
+              "提示 3：使用 str() 將計算結果轉成字串後與 \"g\" 相加輸出。"
+            ],
+            testCases: [
+              { input: "250\n120\n3", expected: "Flour: 750g\nSugar: 360g", isPublic: true },
+              { input: "100\n50\n5", expected: "Flour: 500g\nSugar: 250g", isPublic: false }
+            ]
+          },
+          {
+            id: "1-5",
+            title: "題 1-5：巴士八達通車費餘額計算",
+            description: `<p>八達通卡原有餘額 <code>balance</code> 元，學生乘搭一程車費為 <code>fare</code> 元的巴士（享有半價優惠）。請依序輸入兩個整數 <code>balance</code> 與 <code>fare</code>，輸出扣款後的卡內餘額（保留小數點）。</p>`,
+            sampleInput: "50\n12",
+            sampleOutput: "44.0",
+            starterCode: `balance = int(input())\nfare = int(input())\n\n# 請計算半價扣款後的餘額並輸出\n`,
+            hints: [
+              "提示 1：半價車費為 fare / 2。",
+              "提示 2：扣款後餘額為 balance - fare / 2。",
+              "提示 3：直接用 print() 輸出該數值即可。"
+            ],
+            testCases: [
+              { input: "50\n12", expected: "44.0", isPublic: true },
+              { input: "100\n15", expected: "92.5", isPublic: false }
+            ]
+          },
+          {
+            id: "1-6",
+            title: "題 1-6：網購八折優惠與會員積分",
+            description: `<p>網店全場貨品一律八折（乘以 <code>0.8</code>），並按折實後金額的 <code>10</code> 倍發放會員積分。請輸入原價整數 <code>price</code>，分兩行輸出折實價與獲得積分：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">Pay: &lt;折實價&gt;<br>Points: &lt;積分&gt;</p>`,
+            sampleInput: "200",
+            sampleOutput: "Pay: 160.0\nPoints: 1600.0",
+            starterCode: `price = int(input())\n\n# 請計算折實價與會員積分\n`,
+            hints: [
+              "提示 1：折實價 pay = price * 0.8。",
+              "提示 2：積分 points = pay * 10。",
+              "提示 3：分兩行用 print(\"Pay:\", pay) 與 print(\"Points:\", points) 輸出。"
+            ],
+            testCases: [
+              { input: "200", expected: "Pay: 160.0\nPoints: 1600.0", isPublic: true },
+              { input: "50", expected: "Pay: 40.0\nPoints: 400.0", isPublic: false }
+            ]
+          },
+          {
+            id: "1-7",
+            title: "題 1-7：運動會長跑平均速度計算",
+            description: `<p>運動員在長跑比賽中跑了 <code>dist</code> 米，共花費 <code>sec</code> 秒。請依序輸入兩個整數 <code>dist</code> 和 <code>sec</code>，計算並輸出平均每秒跑多少米（<code>dist / sec</code>）。</p>`,
+            sampleInput: "400\n50",
+            sampleOutput: "8.0",
+            starterCode: `dist = int(input())\nsec = int(input())\n\n# 請計算並輸出平均速度\n`,
+            hints: [
+              "提示 1：速度等於距離除以時間，即 dist / sec。",
+              "提示 2：Python 的單斜線除法 / 會自動輸出小數（例如 8.0）。",
+              "提示 3：直接使用 print(dist / sec) 輸出即可。"
+            ],
+            testCases: [
+              { input: "400\n50", expected: "8.0", isPublic: true },
+              { input: "1500\n300", expected: "5.0", isPublic: false }
+            ]
+          },
+          {
+            id: "1-8",
+            title: "題 1-8：長方體水族箱容積與換水量",
+            description: `<p>長方體水族箱的長、闊、高（厘米）分別為 <code>l</code>、<code>w</code>、<code>h</code>（皆為整數）。每次換水需更換總容積的四分之一（<code>÷ 4</code>）。請依序輸入 <code>l</code>、<code>w</code>、<code>h</code>，輸出每次換水的體積（立方厘米）。</p>`,
+            sampleInput: "60\n30\n40",
+            sampleOutput: "18000.0",
+            starterCode: `l = int(input())\nw = int(input())\nh = int(input())\n\n# 請計算四分之一容積並輸出\n`,
+            hints: [
+              "提示 1：長方體容積為 l * w * h。",
+              "提示 2：四分之一的換水量為 (l * w * h) / 4。",
+              "提示 3：直接用 print() 輸出結果。"
+            ],
+            testCases: [
+              { input: "60\n30\n40", expected: "18000.0", isPublic: true },
+              { input: "50\n20\n20", expected: "5000.0", isPublic: false }
+            ]
           }
         ]
       },
       {
         unitId: "u2",
-        lesson: "第2課：條件判斷 if / elif / else",
+        lesson: "單元 2：if / elif / else 多重條件判斷",
         origin: "延伸自第2課丙部第10題（濕地公園入場費）",
         problems: [
           {
-            id: "2-4",
-            title: "題 2-4：主題樂園門票收費",
-            description: `
-              <p>某主題樂園的門票收費標準如下：</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li><strong>3 歲以下</strong>（不含 3 歲）：免費，輸出 <code>Free</code></li>
-                <li><strong>3 至 11 歲</strong>（含 3 及 11 歲）或 <strong>65 歲及以上</strong>：優惠票，輸出 <code>$120</code></li>
-                <li><strong>其餘年齡</strong>（12 至 64 歲）：成人票，輸出 <code>$250</code></li>
-              </ul>
-              <p>請讓使用者輸入整數年齡 <code>age</code>，並輸出對應的收費。</p>
-            `,
+            id: "2-1",
+            title: "題 2-1：主題樂園門票收費",
+            description: `<p>主題樂園門票收費標準如下：</p><ul class="list-disc list-inside space-y-1 ml-1"><li><strong>3 歲以下</strong>（不含 3 歲）：輸出 <code>Free</code></li><li><strong>3 至 11 歲</strong>（含 3 及 11 歲）或 <strong>65 歲及以上</strong>：輸出 <code>$120</code></li><li><strong>其餘年齡</strong>（12 至 64 歲）：輸出 <code>$250</code></li></ul><p>請輸入整數年齡 <code>age</code>，輸出對應收費。</p>`,
             sampleInput: "10",
             sampleOutput: "$120",
-            starterCode: `age = int(input())\n\n# 請使用 if / elif / else 判斷票價\n`,
+            starterCode: `age = int(input())\n\n# 請使用 if / elif / else 判斷門票收費\n`,
             hints: [
-              "提示 1（條件順序）：先用 if age < 3: 判斷免費幼兒，這樣進入下一個 elif 時年齡必定已經 >= 3。",
-              "提示 2（優惠票條件）：在 elif 中可以使用 age <= 11 or age >= 65: 來判斷小童及長者。",
-              "提示 3（其餘情況）：最後使用 else: 處理 12 至 64 歲的成人票，輸出 \"$250\"。"
+              "提示 1：先用 if age < 3: 判斷免費幼兒。",
+              "提示 2：在 elif 中使用 age <= 11 or age >= 65: 判斷優惠票。",
+              "提示 3：最後使用 else: 輸出 \"$250\"。"
             ],
             testCases: [
               { input: "10", expected: "$120", isPublic: true },
               { input: "2", expected: "Free", isPublic: false },
-              { input: "3", expected: "$120", isPublic: false },
               { input: "65", expected: "$120", isPublic: false },
               { input: "30", expected: "$250", isPublic: false }
             ]
           },
           {
-            id: "2-5",
-            title: "題 2-5：網購運費計算系統",
-            description: `
-              <p>網店根據顧客的購物總金額 <code>amount</code>（整數）計算運費：</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li>滿 <strong>$300 或以上</strong>：免運費，輸出 <code>Free Shipping</code></li>
-                <li><strong>$150 至 $299</strong>（含 150 與 299）：運費 <code>$20</code></li>
-                <li><strong>少於 $150</strong>：運費 <code>$40</code></li>
-              </ul>
-              <p>請讀取 <code>amount</code> 並輸出對應結果。</p>
-            `,
+            id: "2-2",
+            title: "題 2-2：網購運費計算系統",
+            description: `<p>網店根據購物總金額 <code>amount</code>（整數）計算運費：</p><ul class="list-disc list-inside space-y-1 ml-1"><li>滿 <strong>$300 或以上</strong>：輸出 <code>Free Shipping</code></li><li><strong>$150 至 $299</strong>：輸出 <code>$20</code></li><li><strong>少於 $150</strong>：輸出 <code>$40</code></li></ul>`,
             sampleInput: "180",
             sampleOutput: "$20",
-            starterCode: `amount = int(input())\n\n# 請判斷運費並輸出\n`,
+            starterCode: `amount = int(input())\n\n# 請根據購物金額輸出對應運費\n`,
             hints: [
-              "提示 1（由高至低判斷）：先檢查 if amount >= 300: 輸出 \"Free Shipping\"。",
-              "提示 2（善用 elif 特性）：若第一個條件不成立，代表金額已經小於 300，因此第二個條件只需寫 elif amount >= 150: 即可。",
-              "提示 3（邊界檢查）：測試輸入剛好為 300 與 150 時，確認符號 >= 是否正確包含邊界值。"
+              "提示 1：先檢查 if amount >= 300: 輸出 \"Free Shipping\"。",
+              "提示 2：第二個條件寫 elif amount >= 150: 輸出 \"$20\"。",
+              "提示 3：最後 else: 輸出 \"$40\"。"
             ],
             testCases: [
               { input: "180", expected: "$20", isPublic: true },
@@ -629,291 +684,585 @@
             ]
           },
           {
-            id: "2-6",
-            title: "題 2-6：颱風信號停課判斷",
-            description: `
-              <p>根據教育局指引，輸入一個代表熱帶氣旋警告信號的整數 <code>signal</code>（例如 1, 3, 8, 9, 10）：</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li>若信號為 <strong>8 號或以上</strong>：輸出 <code>Classes Suspended</code></li>
-                <li>若信號為 <strong>3 號</strong>：輸出 <code>Kindergarten Suspended</code></li>
-                <li>其他情況（如 1 號）：輸出 <code>Normal Classes</code></li>
-              </ul>
-            `,
-            sampleInput: "8",
-            sampleOutput: "Classes Suspended",
-            starterCode: `signal = int(input())\n\n# 請根據颱風信號輸出停課安排\n`,
+            id: "2-3",
+            title: "題 2-3：天文台酷熱與寒冷警告",
+            description: `<p>輸入當日氣溫 <code>temp</code>（整數）：</p><ul class="list-disc list-inside space-y-1 ml-1"><li><strong>33 度或以上</strong>：輸出 <code>Very Hot Warning</code></li><li><strong>12 度或以下</strong>：輸出 <code>Cold Weather Warning</code></li><li><strong>13 至 32 度之間</strong>：輸出 <code>Pleasant Weather</code></li></ul>`,
+            sampleInput: "34",
+            sampleOutput: "Very Hot Warning",
+            starterCode: `temp = int(input())\n\n# 請判斷氣溫並輸出對應天氣警告\n`,
             hints: [
-              "提示 1（關係運算符）：「8 號或以上」應寫成 signal >= 8；而判斷「等於 3」必須使用雙等號 signal == 3。",
-              "提示 2（分支結構）：使用 if ... elif ... else 三層結構，確保每次只會輸出其中一句訊息。",
-              "提示 3（拼字檢查）：留意 Suspended 與 Kindergarten 的英文字母拼寫是否完全正確。"
+              "提示 1：使用 temp >= 33 判斷酷熱警告。",
+              "提示 2：使用 elif temp <= 12: 判斷寒冷警告。",
+              "提示 3：其餘情況用 else: 輸出 \"Pleasant Weather\"。"
             ],
             testCases: [
-              { input: "8", expected: "Classes Suspended", isPublic: true },
-              { input: "10", expected: "Classes Suspended", isPublic: false },
+              { input: "34", expected: "Very Hot Warning", isPublic: true },
+              { input: "12", expected: "Cold Weather Warning", isPublic: false },
+              { input: "25", expected: "Pleasant Weather", isPublic: false }
+            ]
+          },
+          {
+            id: "2-4",
+            title: "題 2-4：颱風信號停課安排",
+            description: `<p>輸入熱帶氣旋警告信號整數 <code>signal</code>：</p><ul class="list-disc list-inside space-y-1 ml-1"><li><strong>8 號或以上</strong>：輸出 <code>All Schools Suspended</code></li><li><strong>3 號</strong>：輸出 <code>Kindergarten Suspended</code></li><li><strong>1 號或以下</strong>：輸出 <code>Normal Classes</code></li></ul>`,
+            sampleInput: "8",
+            sampleOutput: "All Schools Suspended",
+            starterCode: `signal = int(input())\n\n# 請根據颱風信號輸出停課安排\n`,
+            hints: [
+              "提示 1：判斷「8 號或以上」用 signal >= 8。",
+              "提示 2：判斷「等於 3 號」必須用雙等號 signal == 3。",
+              "提示 3：其餘情況用 else: 輸出 \"Normal Classes\"。"
+            ],
+            testCases: [
+              { input: "8", expected: "All Schools Suspended", isPublic: true },
               { input: "3", expected: "Kindergarten Suspended", isPublic: false },
               { input: "1", expected: "Normal Classes", isPublic: false }
+            ]
+          },
+          {
+            id: "2-5",
+            title: "題 2-5：學校圖書館逾期還書罰款",
+            description: `<p>輸入圖書逾期天數 <code>days</code>（整數）：</p><ul class="list-disc list-inside space-y-1 ml-1"><li><strong>0 天或以下</strong>（準時歸還）：輸出 <code>No Fine</code></li><li><strong>1 至 7 天</strong>：輸出 <code>$10</code></li><li><strong>8 天或以上</strong>：輸出 <code>$30</code></li></ul>`,
+            sampleInput: "5",
+            sampleOutput: "$10",
+            starterCode: `days = int(input())\n\n# 請根據逾期天數輸出罰款\n`,
+            hints: [
+              "提示 1：先判斷 if days <= 0: 輸出 \"No Fine\"。",
+              "提示 2：接著用 elif days <= 7: 輸出 \"$10\"。",
+              "提示 3：最後 else: 輸出 \"$30\"。"
+            ],
+            testCases: [
+              { input: "5", expected: "$10", isPublic: true },
+              { input: "0", expected: "No Fine", isPublic: false },
+              { input: "10", expected: "$30", isPublic: false }
+            ]
+          },
+          {
+            id: "2-6",
+            title: "題 2-6：體適能耐力跑等級評定",
+            description: `<p>中三男生 9 分鐘耐力跑圈數 <code>laps</code>（整數）評級標準如下：</p><ul class="list-disc list-inside space-y-1 ml-1"><li><strong>12 圈或以上</strong>：輸出 <code>Gold</code></li><li><strong>9 至 11 圈</strong>：輸出 <code>Silver</code></li><li><strong>6 至 8 圈</strong>：輸出 <code>Bronze</code></li><li><strong>5 圈或以下</strong>：輸出 <code>Try Harder</code></li></ul>`,
+            sampleInput: "10",
+            sampleOutput: "Silver",
+            starterCode: `laps = int(input())\n\n# 請根據跑圈數輸出獎章等級\n`,
+            hints: [
+              "提示 1：由最高標準往下檢查：if laps >= 12: 輸出 \"Gold\"。",
+              "提示 2：接著依序用 elif laps >= 9: 與 elif laps >= 6: 判斷銀獎與銅獎。",
+              "提示 3：最後 else: 輸出 \"Try Harder\"。"
+            ],
+            testCases: [
+              { input: "10", expected: "Silver", isPublic: true },
+              { input: "12", expected: "Gold", isPublic: false },
+              { input: "6", expected: "Bronze", isPublic: false },
+              { input: "4", expected: "Try Harder", isPublic: false }
+            ]
+          },
+          {
+            id: "2-7",
+            title: "題 2-7：手機流動數據用量提示",
+            description: `<p>輸入本月已使用的流動數據百分比 <code>usage</code>（整數 0–100）：</p><ul class="list-disc list-inside space-y-1 ml-1"><li><strong>100 或以上</strong>：輸出 <code>Data Exhausted</code></li><li><strong>80 至 99</strong>：輸出 <code>Warning: 80% Used</code></li><li><strong>少於 80</strong>：輸出 <code>Data Sufficient</code></li></ul>`,
+            sampleInput: "85",
+            sampleOutput: "Warning: 80% Used",
+            starterCode: `usage = int(input())\n\n# 請根據數據使用百分比輸出提示\n`,
+            hints: [
+              "提示 1：先檢查 if usage >= 100: 輸出 \"Data Exhausted\"。",
+              "提示 2：再用 elif usage >= 80: 輸出 \"Warning: 80% Used\"。",
+              "提示 3：其餘情況用 else: 輸出 \"Data Sufficient\"。"
+            ],
+            testCases: [
+              { input: "85", expected: "Warning: 80% Used", isPublic: true },
+              { input: "100", expected: "Data Exhausted", isPublic: false },
+              { input: "50", expected: "Data Sufficient", isPublic: false }
+            ]
+          },
+          {
+            id: "2-8",
+            title: "題 2-8：空氣質素健康指數 (AQHI) 建議",
+            description: `<p>輸入空氣質素健康指數 <code>aqhi</code>（整數 1–11）：</p><ul class="list-disc list-inside space-y-1 ml-1"><li><strong>1 至 3</strong>：輸出 <code>Low Risk</code></li><li><strong>4 至 6</strong>：輸出 <code>Moderate Risk</code></li><li><strong>7 或以上</strong>：輸出 <code>High Risk</code></li></ul>`,
+            sampleInput: "7",
+            sampleOutput: "High Risk",
+            starterCode: `aqhi = int(input())\n\n# 請根據 AQHI 輸出健康風險級別\n`,
+            hints: [
+              "提示 1：可用 if aqhi <= 3: 判斷低風險。",
+              "提示 2：再用 elif aqhi <= 6: 判斷中風險。",
+              "提示 3：最後 else: 輸出 \"High Risk\"。"
+            ],
+            testCases: [
+              { input: "7", expected: "High Risk", isPublic: true },
+              { input: "3", expected: "Low Risk", isPublic: false },
+              { input: "5", expected: "Moderate Risk", isPublic: false }
             ]
           }
         ]
       },
       {
         unitId: "u3",
-        lesson: "第2課：邏輯運算符 and / or 改寫",
+        lesson: "單元 3：and / or 邏輯運算改寫",
         origin: "延伸自第2課丙部第12題（條件等價轉換）",
         problems: [
           {
-            id: "2-7",
-            title: "題 2-7：博物館入場費（使用 and 運算符）",
-            description: `
-              <p>博物館規定：年齡<strong>介乎 12 至 60 歲之間（包含 12 歲及 60 歲）</strong>的訪客需繳付入場費 <code>50</code>，其餘年齡（12 歲以下或 60 歲以上）則免費（輸出 <code>0</code>）。</p>
-              <p>請使用 <code>and</code> 邏輯運算符編寫條件判斷，輸入整數 <code>age</code> 並輸出應付金額（<code>50</code> 或 <code>0</code>）。</p>
-            `,
+            id: "3-1",
+            title: "題 3-1：博物館入場費（使用 and 運算符）",
+            description: `<p>博物館規定：年齡<strong>介乎 12 至 60 歲之間（包含 12 及 60 歲）</strong>需付入場費 <code>50</code>，其餘年齡免費（輸出 <code>0</code>）。</p><p>請使用 <code>and</code> 邏輯運算符編寫條件判斷，輸入整數 <code>age</code> 並輸出金額。</p>`,
             sampleInput: "25",
             sampleOutput: "50",
-            starterCode: `age = int(input())\n\n# 請使用 and 運算符完成條件判斷\n`,
+            starterCode: `age = int(input())\n\n# 請使用 and 運算符判斷收費\n`,
             hints: [
-              "提示 1（區間寫法）：在 Python 中「介乎 12 至 60 歲（含邊界）」可用兩個條件並以 and 連接：age >= 12 and age <= 60。",
-              "提示 2（if...else 結構）：當上述 and 條件成立（True）時輸出 50，否則（else）輸出 0。",
-              "提示 3（邊界測試）：當輸入剛好是 12 或 60 時，結果應該輸出 50；輸入 11 或 61 時輸出 0。"
+              "提示 1：區間條件寫成 age >= 12 and age <= 60。",
+              "提示 2：條件成立時輸出 50，否則輸出 0。",
+              "提示 3：注意包含邊界值 12 與 60。"
             ],
             testCases: [
               { input: "25", expected: "50", isPublic: true },
               { input: "12", expected: "50", isPublic: false },
               { input: "60", expected: "50", isPublic: false },
-              { input: "11", expected: "0", isPublic: false },
-              { input: "65", expected: "0", isPublic: false }
+              { input: "11", expected: "0", isPublic: false }
             ]
           },
           {
-            id: "2-8",
-            title: "題 2-8：圖書館借書證資格審核",
-            description: `
-              <p>申請成人圖書館借書證必須<strong>同時符合</strong>兩個條件：</p>
-              <ol class="list-decimal list-inside space-y-1 ml-1">
-                <li>年齡 <code>age</code> 滿 <strong>12 歲或以上</strong></li>
-                <li>本地居民狀態 <code>resident</code> 為 <code>"Y"</code></li>
-              </ol>
-              <p>請依序輸入整數 <code>age</code> 及字串 <code>resident</code>，若符合資格輸出 <code>Approved</code>，否則輸出 <code>Rejected</code>。</p>
-            `,
+            id: "3-2",
+            title: "題 3-2：圖書館成人借書證資格審核",
+            description: `<p>申請借書證必須<strong>同時符合</strong>：年齡 <code>age</code> 滿 <strong>12 歲或以上</strong>，且本地居民狀態 <code>resident</code> 為 <code>"Y"</code>。</p><p>依序輸入整數 <code>age</code> 及字串 <code>resident</code>，符合輸出 <code>Approved</code>，否則輸出 <code>Rejected</code>。</p>`,
             sampleInput: "14\nY",
             sampleOutput: "Approved",
-            starterCode: `age = int(input())\nresident = input()\n\n# 請同時檢查兩個條件\n`,
+            starterCode: `age = int(input())\nresident = input()\n\n# 請使用 and 運算符審核申請資格\n`,
             hints: [
-              "提示 1（數據類型）：第二個輸入 resident 是文字字串，因此不需要用 int() 轉換，直接與 \"Y\" 比較即可。",
-              "提示 2（邏輯連接）：兩個條件必須同時成立，所以要用 and 連接：age >= 12 and resident == \"Y\"。",
-              "提示 3（字串引號）：比較字串時務必為 Y 加上雙引號 \"Y\"，否則 Python 會把它當成變數名稱。"
+              "提示 1：第二個輸入 resident 為文字，直接與 \"Y\" 比較。",
+              "提示 2：條件為 age >= 12 and resident == \"Y\"。",
+              "提示 3：字串比較需加上引號 \"Y\"。"
             ],
             testCases: [
               { input: "14\nY", expected: "Approved", isPublic: true },
-              { input: "12\nY", expected: "Approved", isPublic: false },
               { input: "15\nN", expected: "Rejected", isPublic: false },
               { input: "11\nY", expected: "Rejected", isPublic: false }
             ]
           },
           {
-            id: "2-9",
-            title: "題 2-9：過山車安全身高檢查（使用 or 運算符）",
-            description: `
-              <p>基於安全規定，凡是身高 <code>height</code>（整數，單位 cm）<strong>低於 120</strong> <strong>或</strong> <strong>高於 195</strong> 的遊客均不可乘坐過山車。</p>
-              <p>請使用 <code>or</code> 運算符編寫程式：若不符合安全身高輸出 <code>Not Allowed</code>，否則輸出 <code>Allowed</code>。</p>
-            `,
+            id: "3-3",
+            title: "題 3-3：過山車安全身高檢查（使用 or 運算符）",
+            description: `<p>身高 <code>height</code>（整數 cm）<strong>低於 120</strong> <strong>或</strong> <strong>高於 195</strong> 的遊客不可乘坐過山車。</p><p>請使用 <code>or</code> 運算符編寫：不可乘坐輸出 <code>Not Allowed</code>，否則輸出 <code>Allowed</code>。</p>`,
             sampleInput: "115",
             sampleOutput: "Not Allowed",
             starterCode: `height = int(input())\n\n# 請使用 or 運算符檢查安全身高\n`,
             hints: [
-              "提示 1（條件拆解）：「低於 120」是 height < 120，「高於 195」是 height > 195（剛好 120 和 195 是允許乘坐的）。",
-              "提示 2（使用 or）：只要滿足其中一個危險條件便不能乘坐，故寫成 if height < 120 or height > 195:。",
-              "提示 3（輸出對應）：條件成立時輸出 \"Not Allowed\"，else 分支則輸出 \"Allowed\"。"
+              "提示 1：危險條件為 height < 120 or height > 195。",
+              "提示 2：條件成立輸出 \"Not Allowed\"，else 分支輸出 \"Allowed\"。",
+              "提示 3：剛好 120 與 195 屬於 Allowed。"
             ],
             testCases: [
               { input: "115", expected: "Not Allowed", isPublic: true },
               { input: "120", expected: "Allowed", isPublic: false },
-              { input: "195", expected: "Allowed", isPublic: false },
               { input: "200", expected: "Not Allowed", isPublic: false }
+            ]
+          },
+          {
+            id: "3-4",
+            title: "題 3-4：校隊田徑選拔資格檢查",
+            description: `<p>選拔校隊要求 100 米跑時間 <code>sec</code>（整數）<strong>13 秒或以下</strong>，<strong>並且</strong> 操行等級 <code>conduct</code> 為 <code>"A"</code>。</p><p>依序輸入整數 <code>sec</code> 與字串 <code>conduct</code>，符合輸出 <code>Selected</code>，否則輸出 <code>Not Selected</code>。</p>`,
+            sampleInput: "12\nA",
+            sampleOutput: "Selected",
+            starterCode: `sec = int(input())\nconduct = input()\n\n# 請使用 and 運算符判斷是否入選\n`,
+            hints: [
+              "提示 1：13 秒或以下寫成 sec <= 13。",
+              "提示 2：用 and 連接 conduct == \"A\"。",
+              "提示 3：注意大小寫 Selected 與 Not Selected。"
+            ],
+            testCases: [
+              { input: "12\nA", expected: "Selected", isPublic: true },
+              { input: "13\nB", expected: "Not Selected", isPublic: false },
+              { input: "14\nA", expected: "Not Selected", isPublic: false }
+            ]
+          },
+          {
+            id: "3-5",
+            title: "題 3-5：科學館免費入場日判斷",
+            description: `<p>輸入星期幾的英文縮寫 <code>day</code>（如 <code>"Mon"</code>, <code>"Wed"</code>, <code>"Sun"</code>）。科學館逢<strong>星期三 (<code>"Wed"</code>) 或 星期日 (<code>"Sun"</code>)</strong> 免費入場，輸出 <code>Free Entry</code>，其餘日子輸出 <code>Ticket Required</code>。</p>`,
+            sampleInput: "Wed",
+            sampleOutput: "Free Entry",
+            starterCode: `day = input()\n\n# 請使用 or 運算符判斷是否免費入場\n`,
+            hints: [
+              "提示 1：使用 day == \"Wed\" or day == \"Sun\" 判斷免費日。",
+              "提示 2：條件成立輸出 \"Free Entry\"。",
+              "提示 3：否則輸出 \"Ticket Required\"。"
+            ],
+            testCases: [
+              { input: "Wed", expected: "Free Entry", isPublic: true },
+              { input: "Sun", expected: "Free Entry", isPublic: false },
+              { input: "Fri", expected: "Ticket Required", isPublic: false }
+            ]
+          },
+          {
+            id: "3-6",
+            title: "題 3-6：室外游泳池開放條件檢查",
+            description: `<p>室外泳池只有在氣溫 <code>temp</code> <strong>高於 20 度</strong> <strong>且</strong> 雷暴警告 <code>thunder</code> 為 <code>"N"</code> 時才開放。</p><p>依序輸入整數 <code>temp</code> 與字串 <code>thunder</code>，開放輸出 <code>Open</code>，關閉輸出 <code>Closed</code>。</p>`,
+            sampleInput: "26\nN",
+            sampleOutput: "Open",
+            starterCode: `temp = int(input())\nthunder = input()\n\n# 請判斷泳池是否開放\n`,
+            hints: [
+              "提示 1：高於 20 度不包含 20，寫成 temp > 20。",
+              "提示 2：同時需 thunder == \"N\"，用 and 連接兩者。",
+              "提示 3：條件成立輸出 \"Open\"，否則 \"Closed\"。"
+            ],
+            testCases: [
+              { input: "26\nN", expected: "Open", isPublic: true },
+              { input: "28\nY", expected: "Closed", isPublic: false },
+              { input: "20\nN", expected: "Closed", isPublic: false }
+            ]
+          },
+          {
+            id: "3-7",
+            title: "題 3-7：中三級獎學金申請審核",
+            description: `<p>申請條件：平均分 <code>avg</code> <strong>85 分或以上</strong>，<strong>並且</strong> 缺席日數 <code>absent</code> <strong>少於 3 天</strong>。</p><p>依序輸入整數 <code>avg</code> 與 <code>absent</code>，符合輸出 <code>Eligible</code>，否則輸出 <code>Ineligible</code>。</p>`,
+            sampleInput: "88\n1",
+            sampleOutput: "Eligible",
+            starterCode: `avg = int(input())\nabsent = int(input())\n\n# 請使用 and 判斷獎學金資格\n`,
+            hints: [
+              "提示 1：平均分條件為 avg >= 85。",
+              "提示 2：缺席少於 3 天為 absent < 3。",
+              "提示 3：用 and 連接並輸出 Eligible 或 Ineligible。"
+            ],
+            testCases: [
+              { input: "88\n1", expected: "Eligible", isPublic: true },
+              { input: "85\n3", expected: "Ineligible", isPublic: false },
+              { input: "84\n0", expected: "Ineligible", isPublic: false }
+            ]
+          },
+          {
+            id: "3-8",
+            title: "題 3-8：VIP 貴賓室進入權限",
+            description: `<p>持有 <code>"Gold"</code> 會員卡 <strong>或</strong> 消費金額 <code>spend</code> <strong>滿 1000 元或以上</strong>即可進入貴賓室。</p><p>依序輸入字串 <code>card</code> 與整數 <code>spend</code>，可進入輸出 <code>Welcome VIP</code>，否則輸出 <code>Standard Area</code>。</p>`,
+            sampleInput: "Silver\n1200",
+            sampleOutput: "Welcome VIP",
+            starterCode: `card = input()\nspend = int(input())\n\n# 請使用 or 判斷貴賓室權限\n`,
+            hints: [
+              "提示 1：使用 card == \"Gold\" or spend >= 1000。",
+              "提示 2：只要其中一項成立即輸出 \"Welcome VIP\"。",
+              "提示 3：兩項皆不成立輸出 \"Standard Area\"。"
+            ],
+            testCases: [
+              { input: "Silver\n1200", expected: "Welcome VIP", isPublic: true },
+              { input: "Gold\n100", expected: "Welcome VIP", isPublic: false },
+              { input: "Silver\n500", expected: "Standard Area", isPublic: false }
             ]
           }
         ]
       },
       {
         unitId: "u4",
-        lesson: "第3課：While 循環基礎計數與倒數",
+        lesson: "單元 4：while 循環計數與累積",
         origin: "延伸自第3課丙部第1題及乙部第9題",
         problems: [
           {
-            id: "3-1",
-            title: "題 3-1：偶數順序輸出器",
-            description: `
-              <p>本題無需任何輸入。請使用 <code>while</code> 循環，由 <strong>2 開始順序輸出至 10 的所有偶數</strong>（即 2, 4, 6, 8, 10），每行輸出一個數字。</p>
-            `,
+            id: "4-1",
+            title: "題 4-1：偶數順序輸出器",
+            description: `<p>本題無需任何輸入。請使用 <code>while</code> 循環，由 <strong>2 開始順序輸出至 10 的所有偶數</strong>（2, 4, 6, 8, 10），每行一個數字。</p>`,
             sampleInput: "(無輸入)",
             sampleOutput: "2\n4\n6\n8\n10",
             starterCode: `x = 2\n# 請完成 while 循環輸出 2 至 10 的偶數\n`,
             hints: [
-              "提示 1（循環條件）：初始值 x = 2，要讓 10 也能被輸出，while 條件應設為 while x <= 10:。",
-              "提示 2（步進更新）：在循環內先 print(x)，然後讓 x 每次增加 2（寫法：x = x + 2），避免無限循環。",
-              "提示 3（縮排檢查）：print(x) 與 x = x + 2 都必須縮排 4 個空格，放在 while 區塊內。"
+              "提示 1：循環條件設為 while x <= 10:。",
+              "提示 2：循環內先 print(x)，再執行 x = x + 2。",
+              "提示 3：注意縮排 4 個空格。"
             ],
             testCases: [
               { input: "", expected: "2\n4\n6\n8\n10", isPublic: true }
             ]
           },
           {
-            id: "3-2",
-            title: "題 3-2：火箭發射倒數器",
-            description: `
-              <p>本題無需任何輸入。請使用 <code>while</code> 循環模擬火箭發射倒數：由 <strong>5 倒數至 1</strong>（每行輸出一個數字），當倒數結束後，在最後一行輸出 <code>Lift off!</code>。</p>
-            `,
+            id: "4-2",
+            title: "題 4-2：火箭發射倒數器",
+            description: `<p>本題無需任何輸入。請使用 <code>while</code> 循環由 <strong>5 倒數至 1</strong>（每行一個數字），倒數結束後在最後一行輸出 <code>Lift off!</code>。</p>`,
             sampleInput: "(無輸入)",
             sampleOutput: "5\n4\n3\n2\n1\nLift off!",
-            starterCode: `count = 5\n# 請使用 while 循環由 5 倒數至 1，最後輸出 Lift off!\n`,
+            starterCode: `count = 5\n# 請完成倒數循環並在結束後輸出 Lift off!\n`,
             hints: [
-              "提示 1（倒數條件）：初始值 count = 5，只要 count >= 1（或 count > 0）就繼續循環。",
-              "提示 2（每次減 1）：在循環內部先輸出 print(count)，再更新 count = count - 1。",
-              "提示 3（循環結束後輸出）：print(\"Lift off!\") 只需要執行一次，因此不要縮排，放在 while 循環結束之後。"
+              "提示 1：條件設為 while count >= 1:。",
+              "提示 2：循環內輸出 print(count) 後減 1（count = count - 1）。",
+              "提示 3：print(\"Lift off!\") 放在循環外面（無縮排）。"
             ],
             testCases: [
               { input: "", expected: "5\n4\n3\n2\n1\nLift off!", isPublic: true }
             ]
           },
           {
-            id: "3-3",
-            title: "題 3-3：3 的倍數累加器",
-            description: `
-              <p>本題無需任何輸入。請使用 <code>while</code> 循環，計算由 <strong>1 至 20 之間所有 3 的倍數之總和</strong>（即 3 + 6 + 9 + 12 + 15 + 18），並在循環結束後輸出該總和。</p>
-            `,
+            id: "4-3",
+            title: "題 4-3：3 的倍數累加器",
+            description: `<p>本題無需任何輸入。請使用 <code>while</code> 循環計算由 <strong>1 至 20 之間所有 3 的倍數之總和</strong>（3 + 6 + 9 + 12 + 15 + 18），並輸出總和。</p>`,
             sampleInput: "(無輸入)",
             sampleOutput: "63",
-            starterCode: `n = 3\ntotal = 0\n# 請使用 while 循環計算 1 至 20 之間 3 的倍數總和\n`,
+            starterCode: `n = 3\ntotal = 0\n# 請使用 while 循環累加 3 的倍數\n`,
             hints: [
-              "提示 1（累加器概念）：建立一個變數 total = 0 用來累積總和，n 從 3 開始每次加 3，直到 n <= 20。",
-              "提示 2（循環內更新）：在循環內執行 total = total + n，接著執行 n = n + 3。",
-              "提示 3（輸出位置）：注意題目只要求輸出最終總和（63），所以 print(total) 必須放在 while 循環外面（無縮排）。"
+              "提示 1：當 n <= 20 時繼續執行循環。",
+              "提示 2：循環內將 total = total + n，並將 n = n + 3。",
+              "提示 3：循環結束後在外面輸出 print(total)。"
             ],
             testCases: [
               { input: "", expected: "63", isPublic: true }
+            ]
+          },
+          {
+            id: "4-4",
+            title: "題 4-4：每日儲蓄達標天數計算",
+            description: `<p>小明每天儲蓄 <code>daily</code> 元，目標是儲滿 <code>target</code> 元（或以上）。請依序輸入兩個正整數 <code>daily</code> 和 <code>target</code>，使用 <code>while</code> 循環計算需要多少天才能達標並輸出天數。</p>`,
+            sampleInput: "15\n50",
+            sampleOutput: "4",
+            starterCode: `daily = int(input())\ntarget = int(input())\nsaved = 0\ndays = 0\n# 請使用 while 循環計算達標所需天數\n`,
+            hints: [
+              "提示 1：只要 saved < target 就還未達標，繼續循環。",
+              "提示 2：每次循環 saved = saved + daily，並且 days = days + 1。",
+              "提示 3：循環結束後輸出 print(days)。"
+            ],
+            testCases: [
+              { input: "15\n50", expected: "4", isPublic: true },
+              { input: "20\n60", expected: "3", isPublic: false }
+            ]
+          },
+          {
+            id: "4-5",
+            title: "題 4-5：細菌分裂倍增次數模擬",
+            description: `<p>培養皿最初有 <code>1</code> 個細菌，每小時數量倍增（<code>× 2</code>）。請輸入目標數量 <code>limit</code>（正整數），使用 <code>while</code> 循環計算需要經過多少小時細菌數量才會<strong>大於或等於</strong> <code>limit</code>。</p>`,
+            sampleInput: "10",
+            sampleOutput: "4",
+            starterCode: `limit = int(input())\nbacteria = 1\nhours = 0\n# 請計算達到或超過 limit 所需小時數\n`,
+            hints: [
+              "提示 1：條件設為 while bacteria < limit:。",
+              "提示 2：循環內執行 bacteria = bacteria * 2 與 hours = hours + 1。",
+              "提示 3：例如 1 -> 2 -> 4 -> 8 -> 16，共需 4 小時達到 >= 10。"
+            ],
+            testCases: [
+              { input: "10", expected: "4", isPublic: true },
+              { input: "1", expected: "0", isPublic: false },
+              { input: "32", expected: "5", isPublic: false }
+            ]
+          },
+          {
+            id: "4-6",
+            title: "題 4-6：水缸注水溢滿時間",
+            description: `<p>水缸容量為 <code>cap</code> 公升，目前已有 <code>curr</code> 公升水，水喉每分鐘注水 <code>rate</code> 公升。依序輸入三個整數 <code>cap</code>、<code>curr</code>、<code>rate</code>，計算需要多少分鐘水缸才會注滿（<code>curr >= cap</code>）。</p>`,
+            sampleInput: "100\n35\n20",
+            sampleOutput: "4",
+            starterCode: `cap = int(input())\ncurr = int(input())\nrate = int(input())\nmins = 0\n# 請計算注滿水缸所需分鐘數\n`,
+            hints: [
+              "提示 1：只要 curr < cap 就繼續注水。",
+              "提示 2：每次循環 curr = curr + rate，並 mins = mins + 1。",
+              "提示 3：結束後輸出 print(mins)。"
+            ],
+            testCases: [
+              { input: "100\n35\n20", expected: "4", isPublic: true },
+              { input: "50\n50\n10", expected: "0", isPublic: false }
+            ]
+          },
+          {
+            id: "4-7",
+            title: "題 4-7：2 的次方數列輸出器",
+            description: `<p>輸入一個正整數上限 <code>max_val</code>，使用 <code>while</code> 循環從 <code>1</code> 開始，每次乘以 <code>2</code>，依序輸出所有<strong>小於或等於</strong> <code>max_val</code> 的 2 的次方數。</p>`,
+            sampleInput: "20",
+            sampleOutput: "1\n2\n4\n8\n16",
+            starterCode: `max_val = int(input())\np = 1\n# 請輸出所有 <= max_val 的 2 的次方數\n`,
+            hints: [
+              "提示 1：條件設為 while p <= max_val:。",
+              "提示 2：循環內先 print(p)，再更新 p = p * 2。",
+              "提示 3：當 p 變成 32 時 > 20，循環自動停止。"
+            ],
+            testCases: [
+              { input: "20", expected: "1\n2\n4\n8\n16", isPublic: true },
+              { input: "8", expected: "1\n2\n4\n8", isPublic: false }
+            ]
+          },
+          {
+            id: "4-8",
+            title: "題 4-8：輸入數字累計器（輸入 0 結束）",
+            description: `<p>請不斷讀取使用者輸入的整數並累加，直到使用者輸入 <code>0</code> 為止，最後輸出所有輸入數字的總和。</p>`,
+            sampleInput: "10\n25\n5\n0",
+            sampleOutput: "40",
+            starterCode: `total = 0\nnum = int(input())\n# 當 num 不等於 0 時持續累加並讀取下一個數\n`,
+            hints: [
+              "提示 1：條件為 while num != 0:。",
+              "提示 2：循環內執行 total = total + num，然後再讀取 num = int(input())。",
+              "提示 3：當讀到 0 時跳出循環，在循環外輸出 print(total)。"
+            ],
+            testCases: [
+              { input: "10\n25\n5\n0", expected: "40", isPublic: true },
+              { input: "0", expected: "0", isPublic: false }
             ]
           }
         ]
       },
       {
         unitId: "u5",
-        lesson: "第3課：While 循環有效性檢驗 (Validation)",
+        lesson: "單元 5：while 循環輸入有效性檢驗",
         origin: "延伸自第3課丙部第3題（驗證大於0的整數）",
         problems: [
           {
-            id: "3-4",
-            title: "題 3-4：正整數重試驗證與平方計算",
-            description: `
-              <p>請編寫一個具有輸入有效性檢驗的程式：重複讀取使用者輸入的整數，直到使用者輸入一個<strong>大於 0 的正整數</strong>為止。</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li>若輸入的數字 <code>&lt;= 0</code>，輸出 <code>Invalid! Try again.</code> 並繼續等待下一次輸入。</li>
-                <li>一旦輸入大於 0，結束循環並輸出該正整數的<strong>平方</strong>（即 <code>num * num</code>）。</li>
-              </ul>
-            `,
+            id: "5-1",
+            title: "題 5-1：正整數重試驗證與平方計算",
+            description: `<p>重複讀取整數，直到輸入一個<strong>大於 0 的正整數</strong>為止：</p><ul class="list-disc list-inside space-y-1 ml-1"><li>若輸入 <code>&lt;= 0</code>，輸出 <code>Invalid! Try again.</code> 並繼續讀取。</li><li>一旦輸入大於 0，輸出該正整數的<strong>平方</strong>（<code>num * num</code>）。</li></ul>`,
             sampleInput: "-3\n0\n6",
             sampleOutput: "Invalid! Try again.\nInvalid! Try again.\n36",
-            starterCode: `num = int(input())\n# 當 num <= 0 時重複提示並重新輸入\n`,
+            starterCode: `num = int(input())\n\n# 請使用 while 循環進行有效性檢驗\n`,
             hints: [
-              "提示 1（先讀一次再檢查）：在 while 循環前先讀取第一個 num = int(input())，然後用 while num <= 0: 檢查是否無效。",
-              "提示 2（循環內重試）：在 while 區塊內，先輸出 print(\"Invalid! Try again.\")，再重新執行 num = int(input()) 讀取新數字。",
-              "提示 3（通過驗證後）：當跳出 while 循環時，代表 num 一定大於 0，此時在循環外輸出 print(num * num) 即可。"
+              "提示 1：無效條件為 while num <= 0:。",
+              "提示 2：循環內輸出 print(\"Invalid! Try again.\") 並重新讀取 num = int(input())。",
+              "提示 3：循環外輸出 print(num * num)。"
             ],
             testCases: [
               { input: "-3\n0\n6", expected: "Invalid! Try again.\nInvalid! Try again.\n36", isPublic: true },
-              { input: "9", expected: "81", isPublic: false },
-              { input: "-1\n-5\n4", expected: "Invalid! Try again.\nInvalid! Try again.\n16", isPublic: false }
+              { input: "9", expected: "81", isPublic: false }
             ]
           },
           {
-            id: "3-5",
-            title: "題 3-5：考試分數範圍檢查 (0 至 100)",
-            description: `
-              <p>老師輸入學生的考試分數（整數），有效分數必須在 <strong>0 至 100 之間（包含 0 及 100）</strong>。</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li>若輸入的分數小於 0 或大於 100，輸出 <code>Out of range</code> 並繼續讀取下一個輸入。</li>
-                <li>當輸入有效分數後，輸出 <code>Score recorded: &lt;分數&gt;</code>。</li>
-              </ul>
-            `,
+            id: "5-2",
+            title: "題 5-2：考試分數範圍檢查 (0 至 100)",
+            description: `<p>有效分數必須在 <strong>0 至 100 之間（包含 0 及 100）</strong>：</p><ul class="list-disc list-inside space-y-1 ml-1"><li>若小於 0 或大於 100，輸出 <code>Out of range</code> 並繼續讀取。</li><li>輸入有效分數後，輸出 <code>Score recorded: &lt;分數&gt;</code>。</li></ul>`,
             sampleInput: "105\n-10\n88",
             sampleOutput: "Out of range\nOut of range\nScore recorded: 88",
-            starterCode: `score = int(input())\n# 請使用 while 循環檢查分數是否在 0 至 100 範圍外\n`,
+            starterCode: `score = int(input())\n\n# 請檢查分數是否在 0 至 100 之間\n`,
             hints: [
-              "提示 1（無效條件）：分數無效的情況是「小於 0 或 大於 100」，因此 while 條件應寫成 while score < 0 or score > 100:。",
-              "提示 2（更新輸入）：在 while 循環內輸出 \"Out of range\" 後，記得再次用 score = int(input()) 讀取下一次嘗試。",
-              "提示 3（格式輸出）：驗證通過後，在循環外使用 print(\"Score recorded:\", score) 輸出結果。"
+              "提示 1：無效條件為 while score < 0 or score > 100:。",
+              "提示 2：循環內輸出 \"Out of range\" 並再次讀取 score = int(input())。",
+              "提示 3：循環外輸出 print(\"Score recorded:\", score)。"
             ],
             testCases: [
               { input: "105\n-10\n88", expected: "Out of range\nOut of range\nScore recorded: 88", isPublic: true },
-              { input: "0", expected: "Score recorded: 0", isPublic: false },
-              { input: "100", expected: "Score recorded: 100", isPublic: false }
+              { input: "0", expected: "Score recorded: 0", isPublic: false }
             ]
           },
           {
-            id: "3-6",
-            title: "題 3-6：通關密語驗證機",
-            description: `
-              <p>安全系統需要驗證通關密語（區分大小寫的字串）。正確的密語為 <code>"Python"</code>。</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li>程式不斷讀取使用者輸入的字串，只要不等於 <code>"Python"</code>，便輸出 <code>Wrong password</code> 並繼續讀取。</li>
-                <li>當輸入正確的 <code>"Python"</code> 後，輸出 <code>Access granted!</code>。</li>
-              </ul>
-            `,
+            id: "5-3",
+            title: "題 5-3：通關密語驗證機",
+            description: `<p>不斷讀取使用者輸入的字串，只要不等於 <code>"Python"</code>，便輸出 <code>Wrong password</code> 並繼續讀取；輸入正確後輸出 <code>Access granted!</code>。</p>`,
             sampleInput: "python\n1234\nPython",
             sampleOutput: "Wrong password\nWrong password\nAccess granted!",
-            starterCode: `pwd = input()\n# 當 pwd 不等於 "Python" 時持續要求重試\n`,
+            starterCode: `pwd = input()\n\n# 請驗證密語是否為 "Python"\n`,
             hints: [
-              "提示 1（字串比較）：密語是文字，請使用 input()（不要加 int()），並用不等於運算符 != 判斷：while pwd != \"Python\":。",
-              "提示 2（循環內操作）：每次密碼錯誤時輸出 print(\"Wrong password\")，並重新讀取 pwd = input()。",
-              "提示 3（成功解鎖）：當 pwd 等於 \"Python\" 時循環自動結束，在循環外輸出 print(\"Access granted!\")。"
+              "提示 1：條件設為 while pwd != \"Python\":。",
+              "提示 2：循環內輸出 \"Wrong password\" 並重新讀取 pwd = input()。",
+              "提示 3：循環外輸出 \"Access granted!\"。"
             ],
             testCases: [
               { input: "python\n1234\nPython", expected: "Wrong password\nWrong password\nAccess granted!", isPublic: true },
-              { input: "Python", expected: "Access granted!", isPublic: false },
-              { input: "Java\nC++\nPython", expected: "Wrong password\nWrong password\nAccess granted!", isPublic: false }
+              { input: "Python", expected: "Access granted!", isPublic: false }
+            ]
+          },
+          {
+            id: "5-4",
+            title: "題 5-4：八達通增值機金額驗證",
+            description: `<p>增值機只接受 <strong>50 的倍數且大於 0</strong> 的金額（例如 50, 100, 150）。若金額 <code>&lt;= 0</code> <strong>或</strong> 不能被 50 整除（<code>amt % 50 != 0</code>），輸出 <code>Invalid amount</code> 並重新讀取；有效則輸出 <code>Top-up: $&lt;金額&gt;</code>。</p>`,
+            sampleInput: "30\n-50\n100",
+            sampleOutput: "Invalid amount\nInvalid amount\nTop-up: $100",
+            starterCode: `amt = int(input())\n\n# 請驗證增值金額是否為大於 0 的 50 倍數\n`,
+            hints: [
+              "提示 1：無效條件為 while amt <= 0 or amt % 50 != 0:。",
+              "提示 2：循環內輸出 \"Invalid amount\" 並重讀 amt = int(input())。",
+              "提示 3：有效後輸出 print(\"Top-up: $\" + str(amt))。"
+            ],
+            testCases: [
+              { input: "30\n-50\n100", expected: "Invalid amount\nInvalid amount\nTop-up: $100", isPublic: true },
+              { input: "50", expected: "Top-up: $50", isPublic: false }
+            ]
+          },
+          {
+            id: "5-5",
+            title: "題 5-5：學號範圍有效性檢查 (1 至 40)",
+            description: `<p>班級學號必須介乎 <strong>1 至 40 之間（含 1 及 40）</strong>。若超出範圍輸出 <code>Invalid ID</code> 並重新讀取；輸入有效學號後輸出 <code>Student #&lt;學號&gt;</code>。</p>`,
+            sampleInput: "0\n45\n18",
+            sampleOutput: "Invalid ID\nInvalid ID\nStudent #18",
+            starterCode: `sid = int(input())\n\n# 請檢查學號是否在 1 至 40 之間\n`,
+            hints: [
+              "提示 1：無效條件為 while sid < 1 or sid > 40:。",
+              "提示 2：循環內輸出 \"Invalid ID\" 並重新讀取 sid = int(input())。",
+              "提示 3：輸出時使用 \"Student #\" + str(sid)。"
+            ],
+            testCases: [
+              { input: "0\n45\n18", expected: "Invalid ID\nInvalid ID\nStudent #18", isPublic: true },
+              { input: "1", expected: "Student #1", isPublic: false }
+            ]
+          },
+          {
+            id: "5-6",
+            title: "題 5-6：電梯安全載重確認系統",
+            description: `<p>電梯最高載重為 <code>800</code> 公斤。不斷讀取目前總重量 <code>weight</code>（整數）：只要 <code>weight &gt; 800</code>，便輸出 <code>Overload! Please step out.</code> 並重新讀取；當 <code>weight &lt;= 800</code> 時輸出 <code>Door closing...</code>。</p>`,
+            sampleInput: "920\n850\n760",
+            sampleOutput: "Overload! Please step out.\nOverload! Please step out.\nDoor closing...",
+            starterCode: `weight = int(input())\n\n# 請檢查電梯是否超載\n`,
+            hints: [
+              "提示 1：超載條件為 while weight > 800:。",
+              "提示 2：循環內輸出 \"Overload! Please step out.\" 並重讀 weight。",
+              "提示 3：安全後輸出 \"Door closing...\"。"
+            ],
+            testCases: [
+              { input: "920\n850\n760", expected: "Overload! Please step out.\nOverload! Please step out.\nDoor closing...", isPublic: true },
+              { input: "800", expected: "Door closing...", isPublic: false }
+            ]
+          },
+          {
+            id: "5-7",
+            title: "題 5-7：設定新密碼長度檢查",
+            description: `<p>新密碼長度必須<strong>至少有 6 個字元</strong>（<code>len(pwd) &gt;= 6</code>）。不斷讀取字串 <code>pwd</code>，若長度少於 6，輸出 <code>Too short</code> 並繼續讀取；符合要求後輸出 <code>Password set!</code>。</p>`,
+            sampleInput: "abc\n12345\nsecret1",
+            sampleOutput: "Too short\nToo short\nPassword set!",
+            starterCode: `pwd = input()\n\n# 請使用 len() 檢查密碼長度是否至少 6 個字元\n`,
+            hints: [
+              "提示 1：使用 len(pwd) 可取得字串長度。",
+              "提示 2：無效條件為 while len(pwd) < 6:。",
+              "提示 3：循環外輸出 \"Password set!\"。"
+            ],
+            testCases: [
+              { input: "abc\n12345\nsecret1", expected: "Too short\nToo short\nPassword set!", isPublic: true },
+              { input: "123456", expected: "Password set!", isPublic: false }
+            ]
+          },
+          {
+            id: "5-8",
+            title: "題 5-8：確認選單選項 (Y / N)",
+            description: `<p>系統要求使用者輸入 <code>"Y"</code> 或 <code>"N"</code>。只要輸入既不是 <code>"Y"</code> 也不是 <code>"N"</code>，便輸出 <code>Enter Y or N</code> 並重新讀取；輸入有效選項後輸出 <code>Confirmed: &lt;選項&gt;</code>。</p>`,
+            sampleInput: "yes\nA\nY",
+            sampleOutput: "Enter Y or N\nEnter Y or N\nConfirmed: Y",
+            starterCode: `ans = input()\n\n# 請驗證輸入是否為 "Y" 或 "N"\n`,
+            hints: [
+              "提示 1：無效條件為 while ans != \"Y\" and ans != \"N\":。",
+              "提示 2：循環內輸出 \"Enter Y or N\" 並重讀 ans = input()。",
+              "提示 3：有效後輸出 print(\"Confirmed:\", ans)。"
+            ],
+            testCases: [
+              { input: "yes\nA\nY", expected: "Enter Y or N\nEnter Y or N\nConfirmed: Y", isPublic: true },
+              { input: "N", expected: "Confirmed: N", isPublic: false }
             ]
           }
         ]
       },
       {
         unitId: "u6",
-        lesson: "第4課：For 循環區間求和",
+        lesson: "單元 6：for 循環與區間求和",
         origin: "延伸自第4課丙部第1題（100至200整數總和）",
         problems: [
           {
-            id: "4-1",
-            title: "題 4-1：自訂區間總和計算機",
-            description: `
-              <p>請讓使用者依序輸入兩個整數 <code>start</code> 和 <code>end</code>（保證 <code>start &lt;= end</code>）。</p>
-              <p>使用 <code>for</code> 循環與 <code>range()</code> 函數，計算並輸出由 <strong><code>start</code> 至 <code>end</code>（包含兩端）</strong>之間所有整數的總和。</p>
-            `,
+            id: "6-1",
+            title: "題 6-1：自訂區間總和計算機",
+            description: `<p>依序輸入兩個整數 <code>start</code> 和 <code>end</code>（保證 <code>start &lt;= end</code>），使用 <code>for</code> 循環計算並輸出由 <strong><code>start</code> 至 <code>end</code>（包含兩端）</strong>所有整數的總和。</p>`,
             sampleInput: "1\n5",
             sampleOutput: "15",
             starterCode: `start = int(input())\nend = int(input())\ntotal = 0\n\n# 請使用 for 循環計算 start 至 end 的總和\n`,
             hints: [
-              "提示 1（range 的結束值）：Python 的 range(a, b) 不包含 b 本身，因此要包含 end，必須寫成 range(start, end + 1)。",
-              "提示 2（循環累加）：在 for i in range(start, end + 1): 內，每次將 i 加進 total（total = total + i）。",
-              "提示 3（輸出結果）：循環完成後，在無縮排位置輸出 print(total)。"
+              "提示 1：range(start, end + 1) 可包含 end 本身。",
+              "提示 2：在循環內累加 total = total + i。",
+              "提示 3：循環結束後輸出 print(total)。"
             ],
             testCases: [
               { input: "1\n5", expected: "15", isPublic: true },
-              { input: "100\n200", expected: "15150", isPublic: false },
-              { input: "7\n7", expected: "7", isPublic: false }
+              { input: "100\n200", expected: "15150", isPublic: false }
             ]
           },
           {
-            id: "4-2",
-            title: "題 4-2：奇數總和計算器",
-            description: `
-              <p>請讓使用者輸入一個正整數 <code>n</code>，使用 <code>for</code> 循環計算由 <strong>1 至 <code>n</code>（包含 <code>n</code>）之間所有奇數（單數）的總和</strong>並輸出。</p>
-              <p>例如當 <code>n = 6</code> 時，1 至 6 的奇數為 1, 3, 5，總和為 <code>9</code>。</p>
-            `,
+            id: "6-2",
+            title: "題 6-2：奇數總和計算器",
+            description: `<p>輸入一個正整數 <code>n</code>，使用 <code>for</code> 循環計算由 <strong>1 至 <code>n</code>（包含 <code>n</code>）之間所有奇數的總和</strong>並輸出。</p>`,
             sampleInput: "6",
             sampleOutput: "9",
             starterCode: `n = int(input())\ntotal = 0\n\n# 請計算 1 至 n 之間所有奇數的總和\n`,
             hints: [
-              "提示 1（利用步長 step）：range(1, n + 1, 2) 可以直接由 1 開始，每次跳 2 步，依序產生 1, 3, 5... 直到不超過 n。",
-              "提示 2（另一種做法）：也可以用 range(1, n + 1) 配合 if i % 2 == 1: 判斷是否為奇數再累加。",
-              "提示 3（測試邊界）：確認當 n 本身是奇數（如 n = 5）時，range(1, n + 1, 2) 也有把 5 計算在內（1+3+5=9）。"
+              "提示 1：使用 range(1, n + 1, 2) 可依序產生 1, 3, 5...。",
+              "提示 2：在循環內執行 total = total + i。",
+              "提示 3：循環結束後輸出 print(total)。"
             ],
             testCases: [
               { input: "6", expected: "9", isPublic: true },
@@ -922,72 +1271,142 @@
             ]
           },
           {
-            id: "4-3",
-            title: "題 4-3：階乘計算機 (Factorial)",
-            description: `
-              <p>在數學中，正整數 <code>n</code> 的階乘（記作 <code>n!</code>）是指由 1 乘到 <code>n</code> 的連乘積，即 <code>1 × 2 × 3 × ... × n</code>。</p>
-              <p>請讓使用者輸入一個正整數 <code>n</code>，使用 <code>for</code> 循環計算並輸出 <code>n!</code> 的結果。</p>
-            `,
+            id: "6-3",
+            title: "題 6-3：階乘計算機 (Factorial)",
+            description: `<p>正整數 <code>n</code> 的階乘（<code>n!</code>）是指 <code>1 × 2 × 3 × ... × n</code>。請輸入正整數 <code>n</code>，使用 <code>for</code> 循環計算並輸出 <code>n!</code>。</p>`,
             sampleInput: "5",
             sampleOutput: "120",
-            starterCode: `n = int(input())\nans = 1\n\n# 請使用 for 循環計算 1 * 2 * ... * n\n`,
+            starterCode: `n = int(input())\nans = 1\n\n# 請使用 for 循環計算 n 的階乘\n`,
             hints: [
-              "提示 1（連乘初始值）：連加時初始值設為 0，但連乘時初始值必須設為 1（否則任何數乘以 0 都會變成 0）。",
-              "提示 2（循環範圍）：使用 for i in range(1, n + 1): 讓 i 依序取得 1, 2, ..., n。",
-              "提示 3（累積相乘）：在循環內執行 ans = ans * i，最後輸出 print(ans)。"
+              "提示 1：連乘初始值必須設為 1。",
+              "提示 2：使用 for i in range(1, n + 1): 並執行 ans = ans * i。",
+              "提示 3：循環結束後輸出 print(ans)。"
             ],
             testCases: [
               { input: "5", expected: "120", isPublic: true },
               { input: "1", expected: "1", isPublic: false },
               { input: "6", expected: "720", isPublic: false }
             ]
+          },
+          {
+            id: "6-4",
+            title: "題 6-4：指定範圍偶數總和",
+            description: `<p>輸入一個正整數 <code>n</code>，使用 <code>for</code> 循環計算由 <strong>2 至 <code>n</code>（包含 <code>n</code>）之間所有偶數的總和</strong>並輸出。</p>`,
+            sampleInput: "8",
+            sampleOutput: "20",
+            starterCode: `n = int(input())\ntotal = 0\n\n# 請計算 2 至 n 之間所有偶數的總和\n`,
+            hints: [
+              "提示 1：使用 range(2, n + 1, 2) 可依序產生 2, 4, 6...。",
+              "提示 2：循環內累加 total = total + i。",
+              "提示 3：結束後輸出 print(total)。"
+            ],
+            testCases: [
+              { input: "8", expected: "20", isPublic: true },
+              { input: "7", expected: "12", isPublic: false }
+            ]
+          },
+          {
+            id: "6-5",
+            title: "題 6-5：連續整數平方和計算器",
+            description: `<p>輸入正整數 <code>n</code>，計算 <code>1² + 2² + 3² + ... + n²</code> 的總和並輸出（例如 <code>n = 3</code> 時，<code>1 + 4 + 9 = 14</code>）。</p>`,
+            sampleInput: "3",
+            sampleOutput: "14",
+            starterCode: `n = int(input())\ntotal = 0\n\n# 請計算 1 到 n 的平方和\n`,
+            hints: [
+              "提示 1：在 Python 中 i 的平方可寫成 i ** 2 或 i * i。",
+              "提示 2：使用 for i in range(1, n + 1): 並累加 total = total + i ** 2。",
+              "提示 3：循環結束後輸出 print(total)。"
+            ],
+            testCases: [
+              { input: "3", expected: "14", isPublic: true },
+              { input: "4", expected: "30", isPublic: false }
+            ]
+          },
+          {
+            id: "6-6",
+            title: "題 6-6：超市購物清單總金額計算",
+            description: `<p>先輸入購買貨品件數 <code>n</code>，接著使用 <code>for</code> 循環依序讀取 <code>n</code> 件貨品的價錢（整數），最後輸出總金額 <code>Total: $&lt;總金額&gt;</code>。</p>`,
+            sampleInput: "3\n15\n25\n10",
+            sampleOutput: "Total: $50",
+            starterCode: `n = int(input())\ntotal = 0\n\n# 請用 for 循環讀取 n 個價錢並計算總金額\n`,
+            hints: [
+              "提示 1：使用 for i in range(n): 循環 n 次。",
+              "提示 2：每次循環讀取 price = int(input()) 並加到 total。",
+              "提示 3：最後輸出 \"Total: $\" + str(total)。"
+            ],
+            testCases: [
+              { input: "3\n15\n25\n10", expected: "Total: $50", isPublic: true },
+              { input: "2\n100\n50", expected: "Total: $150", isPublic: false }
+            ]
+          },
+          {
+            id: "6-7",
+            title: "題 6-7：一週每日運動步數總計",
+            description: `<p>連續讀取 <strong>7 天</strong>的每日步行步數（整數），計算並輸出整星期的總步數。</p>`,
+            sampleInput: "5000\n6000\n7000\n8000\n6000\n9000\n9000",
+            sampleOutput: "50000",
+            starterCode: `total_steps = 0\n\n# 請使用 range(7) 讀取 7 天步數並計算總和\n`,
+            hints: [
+              "提示 1：使用 for day in range(7): 讀取 7 次輸入。",
+              "提示 2：每次讀取 steps = int(input()) 並累加至 total_steps。",
+              "提示 3：最後輸出 print(total_steps)。"
+            ],
+            testCases: [
+              { input: "5000\n6000\n7000\n8000\n6000\n9000\n9000", expected: "50000", isPublic: true },
+              { input: "1000\n1000\n1000\n1000\n1000\n1000\n1000", expected: "7000", isPublic: false }
+            ]
+          },
+          {
+            id: "6-8",
+            title: "題 6-8：5 的倍數區間總和",
+            description: `<p>輸入正整數 <code>n</code>，使用 <code>for</code> 循環計算由 <strong>5 至 <code>n</code>（包含 <code>n</code>）之間所有 5 的倍數總和</strong>并輸出。</p>`,
+            sampleInput: "15",
+            sampleOutput: "30",
+            starterCode: `n = int(input())\ntotal = 0\n\n# 請計算 5 至 n 之間所有 5 的倍數總和\n`,
+            hints: [
+              "提示 1：使用 range(5, n + 1, 5) 依序產生 5, 10, 15...。",
+              "提示 2：循環內累加 total = total + i。",
+              "提示 3：結束後輸出 print(total)。"
+            ],
+            testCases: [
+              { input: "15", expected: "30", isPublic: true },
+              { input: "22", expected: "50", isPublic: false }
+            ]
           }
         ]
       },
       {
         unitId: "u7",
-        lesson: "第4課：For 循環步長與數列輸出",
+        lesson: "單元 7：for 循環與步長數列",
         origin: "延伸自第4課丙部第2題（偶數平方數列）",
         problems: [
           {
-            id: "4-4",
-            title: "題 4-4：奇數立方數列生成器",
-            description: `
-              <p>本題無需任何輸入。請使用 <code>for</code> 循環輸出 <strong>1, 3, 5, 7, 9</strong> 這五個奇數的立方（即 <code>n ** 3</code>），嚴格按照以下格式輸出共 5 行：</p>
-              <pre class="font-mono-code text-xs bg-slate-200/70 p-2 rounded mt-1">The cube of 1 is 1
-The cube of 3 is 27
-...</pre>
-            `,
+            id: "7-1",
+            title: "題 7-1：奇數立方數列生成器",
+            description: `<p>本題無需輸入。使用 <code>for</code> 循環輸出 <strong>1, 3, 5, 7, 9</strong> 的立方（<code>n ** 3</code>），格式如下：</p><pre class="font-mono-code text-xs bg-slate-200/70 p-2 rounded mt-1">The cube of 1 is 1\nThe cube of 3 is 27\n...</pre>`,
             sampleInput: "(無輸入)",
             sampleOutput: "The cube of 1 is 1\nThe cube of 3 is 27\nThe cube of 5 is 125\nThe cube of 7 is 343\nThe cube of 9 is 729",
-            starterCode: `# 請使用 for n in range(...) 輸出 1, 3, 5, 7, 9 的立方\n`,
+            starterCode: `# 請使用 range(1, 10, 2) 輸出奇數立方數列\n`,
             hints: [
-              "提示 1（生成奇數序列）：使用 range(1, 10, 2) 可以依序產生 1, 3, 5, 7, 9。",
-              "提示 2（立方運算）：在 Python 中，n 的三次方（立方）可以寫成 n ** 3 或 n * n * n。",
-              "提示 3（格式化輸出）：在循環內使用 print(\"The cube of\", n, \"is\", n ** 3) 即可自動處理空格並輸出整齊句子。"
+              "提示 1：range(1, 10, 2) 產生 1, 3, 5, 7, 9。",
+              "提示 2：立方寫成 n ** 3。",
+              "提示 3：使用 print(\"The cube of\", n, \"is\", n ** 3)。"
             ],
             testCases: [
-              {
-                input: "",
-                expected: "The cube of 1 is 1\nThe cube of 3 is 27\nThe cube of 5 is 125\nThe cube of 7 is 343\nThe cube of 9 is 729",
-                isPublic: true
-              }
+              { input: "", expected: "The cube of 1 is 1\nThe cube of 3 is 27\nThe cube of 5 is 125\nThe cube of 7 is 343\nThe cube of 9 is 729", isPublic: true }
             ]
           },
           {
-            id: "4-5",
-            title: "題 4-5：九九乘法表指定行",
-            description: `
-              <p>請讓使用者輸入一個整數 <code>m</code>，使用 <code>for</code> 循環輸出 <code>m</code> 乘以 1 至 5 的乘法表，格式必須完全符合以下範例（注意小寫英文字母 <code>x</code> 兩側各有一個空格）：</p>
-              <p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">m x i = 結果</p>
-            `,
+            id: "7-2",
+            title: "題 7-2：九九乘法表指定行",
+            description: `<p>輸入一個整數 <code>m</code>，輸出 <code>m</code> 乘以 1 至 5 的乘法表（注意小寫英文字母 <code>x</code> 兩側各有一個空格）：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">m x i = 結果</p>`,
             sampleInput: "7",
             sampleOutput: "7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35",
-            starterCode: `m = int(input())\n\n# 請使用 for 循環輸出 m 乘以 1 至 5 的算式\n`,
+            starterCode: `m = int(input())\n\n# 請使用 for 循環輸出乘法表\n`,
             hints: [
-              "提示 1（循環次數）：要讓 i 依序為 1, 2, 3, 4, 5，請使用 for i in range(1, 6):。",
-              "提示 2（乘號字元）：題目要求的乘號是小寫英文字母 \"x\"（不是星號 *），且前後都有空格。",
-              "提示 3（多參數 print）：使用 print(m, \"x\", i, \"=\", m * i) 可以輕鬆在每個項目之間自動加上單一空格。"
+              "提示 1：使用 for i in range(1, 6):。",
+              "提示 2：乘號是小寫英文字母 \"x\"。",
+              "提示 3：使用 print(m, \"x\", i, \"=\", m * i)。"
             ],
             testCases: [
               { input: "7", expected: "7 x 1 = 7\n7 x 2 = 14\n7 x 3 = 21\n7 x 4 = 28\n7 x 5 = 35", isPublic: true },
@@ -995,113 +1414,337 @@ The cube of 3 is 27
             ]
           },
           {
-            id: "4-6",
-            title: "題 4-6：倒數跳步數列 (負步長)",
-            description: `
-              <p>本題無需任何輸入。請使用 <code>for</code> 循環與 <code>range()</code> 的<strong>負步長</strong>參數，由 <strong>30 開始每次減 5 倒數輸出至 10</strong>（即 30, 25, 20, 15, 10），每行一個數字。</p>
-            `,
+            id: "7-3",
+            title: "題 7-3：倒數跳步數列 (負步長)",
+            description: `<p>本題無需輸入。使用 <code>for</code> 循環與 <code>range()</code> 的<strong>負步長</strong>參數，由 <strong>30 開始每次減 5 倒數輸出至 10</strong>（30, 25, 20, 15, 10）。</p>`,
             sampleInput: "(無輸入)",
             sampleOutput: "30\n25\n20\n15\n10",
-            starterCode: `# 請使用 for 循環與負步長輸出 30, 25, 20, 15, 10\n`,
+            starterCode: `# 請使用負步長 range() 輸出 30 至 10\n`,
             hints: [
-              "提示 1（負步長語法）：當步長為負數（例如 -5）時，range(start, stop, -5) 會從 start 遞減直到大於 stop 為止。",
-              "提示 2（結束值設定）：因為 stop 本身不會被包含在內，若要輸出最後一個數字 10，stop 應該設為比 10 小的數（例如 9 或 5）。",
-              "提示 3（完整寫法）：嘗試使用 for n in range(30, 9, -5): 並觀察輸出結果。"
+              "提示 1：步長設為 -5。",
+              "提示 2：結束值應設為比 10 小的數（如 9 或 5）。",
+              "提示 3：寫法為 for n in range(30, 9, -5):。"
             ],
             testCases: [
               { input: "", expected: "30\n25\n20\n15\n10", isPublic: true }
+            ]
+          },
+          {
+            id: "7-4",
+            title: "題 7-4：奧運會舉辦年份列表",
+            description: `<p>現代奧運會每 4 年舉辦一次。輸入起始年份 <code>start_y</code> 與結束年份 <code>end_y</code>（保證皆為奧運年份且 <code>start_y &lt;= end_y</code>），使用步長 <code>4</code> 依序輸出該期間所有奧運年份。</p>`,
+            sampleInput: "2008\n2024",
+            sampleOutput: "2008\n2012\n2016\n2020\n2024",
+            starterCode: `start_y = int(input())\nend_y = int(input())\n\n# 請使用步長 4 輸出所有奧運年份\n`,
+            hints: [
+              "提示 1：range(start_y, end_y + 1, 4) 可包含 end_y。",
+              "提示 2：在循環內直接 print(y)。",
+              "提示 3：測試輸入 2008 與 2024 應輸出 5 個年份。"
+            ],
+            testCases: [
+              { input: "2008\n2024", expected: "2008\n2012\n2016\n2020\n2024", isPublic: true },
+              { input: "2000\n2004", expected: "2000\n2004", isPublic: false }
+            ]
+          },
+          {
+            id: "7-5",
+            title: "題 7-5：攝氏轉華氏溫度對照表",
+            description: `<p>公式：<code>F = C * 1.8 + 32</code>。本題無需輸入，請輸出攝氏 <strong>0 度至 40 度（每 10 度一格）</strong>的對照表，格式如下：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">0 C = 32.0 F</p>`,
+            sampleInput: "(無輸入)",
+            sampleOutput: "0 C = 32.0 F\n10 C = 50.0 F\n20 C = 68.0 F\n30 C = 86.0 F\n40 C = 104.0 F",
+            starterCode: `# 請輸出 0 至 40 度（步長 10）的攝氏與華氏對照表\n`,
+            hints: [
+              "提示 1：使用 for c in range(0, 41, 10):。",
+              "提示 2：計算 f = c * 1.8 + 32。",
+              "提示 3：使用 print(c, \"C =\", f, \"F\") 輸出。"
+            ],
+            testCases: [
+              { input: "", expected: "0 C = 32.0 F\n10 C = 50.0 F\n20 C = 68.0 F\n30 C = 86.0 F\n40 C = 104.0 F", isPublic: true }
+            ]
+          },
+          {
+            id: "7-6",
+            title: "題 7-6：階梯式書本價格對照表",
+            description: `<p>每本練習簿售價 <code>12</code> 元。本題無需輸入，請使用 <code>for</code> 循環輸出購買 <strong>10, 20, 30, 40, 50 本</strong>的總價格，格式如下：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">10 books: $120</p>`,
+            sampleInput: "(無輸入)",
+            sampleOutput: "10 books: $120\n20 books: $240\n30 books: $360\n40 books: $480\n50 books: $600",
+            starterCode: `# 請輸出 10 至 50 本（步長 10）的價格表\n`,
+            hints: [
+              "提示 1：使用 for qty in range(10, 51, 10):。",
+              "提示 2：注意 $ 與金額之間沒有空格。",
+              "提示 3：可用 print(str(qty) + \" books: $\" + str(qty * 12))。"
+            ],
+            testCases: [
+              { input: "", expected: "10 books: $120\n20 books: $240\n30 books: $360\n40 books: $480\n50 books: $600", isPublic: true }
+            ]
+          },
+          {
+            id: "7-7",
+            title: "題 7-7：星號階梯圖案生成器",
+            description: `<p>輸入正整數 <code>rows</code>，使用 <code>for</code> 循環輸出 <code>rows</code> 行星號三角形（第 1 行 1 粒 <code>*</code>，第 2 行 2 粒 <code>**</code>，如此類推）。</p>`,
+            sampleInput: "4",
+            sampleOutput: "*\n**\n***\n****",
+            starterCode: `rows = int(input())\n\n# 請輸出 rows 行的星號階梯\n`,
+            hints: [
+              "提示 1：在 Python 中字串乘以整數會重複字串，例如 \"*\" * 3 會得到 \"***\"。",
+              "提示 2：使用 for i in range(1, rows + 1):。",
+              "提示 3：循環內輸出 print(\"*\" * i)。"
+            ],
+            testCases: [
+              { input: "4", expected: "*\n**\n***\n****", isPublic: true },
+              { input: "2", expected: "*\n**", isPublic: false }
+            ]
+          },
+          {
+            id: "7-8",
+            title: "題 7-8：電梯樓層顯示器（跳過 4 樓與 14 樓）",
+            description: `<p>大廈由 <code>1</code> 樓升至 <code>15</code> 樓，但設有 4 樓與 14 樓（<code>i == 4 or i == 14</code> 時跳過不輸出）。本題無需輸入，請輸出所有顯示的樓層號碼。</p>`,
+            sampleInput: "(無輸入)",
+            sampleOutput: "1\n2\n3\n5\n6\n7\n8\n9\n10\n11\n12\n13\n15",
+            starterCode: `# 請輸出 1 至 15 樓（跳過 4 與 14）\n`,
+            hints: [
+              "提示 1：使用 for floor in range(1, 16):。",
+              "提示 2：用 if floor != 4 and floor != 14: 才輸出 print(floor)。",
+              "提示 3：確認 4 與 14 沒有出現在輸出中。"
+            ],
+            testCases: [
+              { input: "", expected: "1\n2\n3\n5\n6\n7\n8\n9\n10\n11\n12\n13\n15", isPublic: true }
             ]
           }
         ]
       },
       {
         unitId: "u8",
-        lesson: "第4課：For 循環結合條件判斷",
+        lesson: "單元 8：for 循環結合條件判斷",
         origin: "延伸自第4課丙部第3題（「逢七拍手」遊戲）",
         problems: [
           {
-            id: "4-7",
-            title: "題 4-7：升級版「逢七拍手」遊戲",
-            description: `
-              <p>請讓使用者輸入一個正整數上限 <code>n</code>，程式模擬由 <strong>1 報數至 <code>n</code></strong>：</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li>凡是 <strong>7 的倍數</strong>（例如 7, 14, 21）<strong>或</strong> <strong>個位數為 7</strong> 的數字（例如 7, 17, 27），改為輸出 <code>PAK!</code></li>
-                <li>其餘數字則直接輸出該數字本身。</li>
-              </ul>
-            `,
+            id: "8-1",
+            title: "題 8-1：升級版「逢七拍手」遊戲",
+            description: `<p>輸入正整數上限 <code>n</code>，模擬由 <strong>1 報數至 <code>n</code></strong>：凡是 <strong>7 的倍數</strong> <strong>或</strong> <strong>個位數為 7</strong> 的數字，改為輸出 <code>PAK!</code>，其餘直接輸出該數字。</p>`,
             sampleInput: "18",
             sampleOutput: "1\n2\n3\n4\n5\n6\nPAK!\n8\n9\n10\n11\n12\n13\nPAK!\n15\n16\nPAK!\n18",
-            starterCode: `n = int(input())\n\n# 請使用 for 循環結合 if...else 模擬逢七拍手\n`,
+            starterCode: `n = int(input())\n\n# 請使用 for 循環結合 if/else 模擬遊戲\n`,
             hints: [
-              "提示 1（餘數運算符 %）：在 Python 中，i % 7 == 0 代表 i 是 7 的倍數；而 i % 10 == 7 則代表 i 除以 10 餘 7（即個位數為 7）。",
-              "提示 2（使用 or 連接）：在 for i in range(1, n + 1): 循環內，用 if i % 7 == 0 or i % 10 == 7: 判斷是否拍手。",
-              "提示 3（輸出分支）：條件成立時 print(\"PAK!\")，否則 else: 輸出 print(i)。"
+              "提示 1：i % 7 == 0 代表 7 的倍數；i % 10 == 7 代表個位數為 7。",
+              "提示 2：在 for i in range(1, n + 1): 內用 or 連接兩個條件。",
+              "提示 3：條件成立輸出 \"PAK!\"，否則輸出 i。"
             ],
             testCases: [
-              {
-                input: "18",
-                expected: "1\n2\n3\n4\n5\n6\nPAK!\n8\n9\n10\n11\n12\n13\nPAK!\n15\n16\nPAK!\n18",
-                isPublic: true
-              },
-              {
-                input: "7",
-                expected: "1\n2\n3\n4\n5\n6\nPAK!",
-                isPublic: false
-              }
+              { input: "18", expected: "1\n2\n3\n4\n5\n6\nPAK!\n8\n9\n10\n11\n12\n13\nPAK!\n15\n16\nPAK!\n18", isPublic: true },
+              { input: "7", expected: "1\n2\n3\n4\n5\n6\nPAK!", isPublic: false }
             ]
           },
           {
-            id: "4-8",
-            title: "題 4-8：FizzBuzz 經典挑戰",
-            description: `
-              <p>本題無需任何輸入。請使用 <code>for</code> 循環由 <strong>1 報數至 15</strong>，規則如下：</p>
-              <ul class="list-disc list-inside space-y-1 ml-1">
-                <li>若數字<strong>同時是 3 和 5 的倍數</strong>，輸出 <code>FizzBuzz</code></li>
-                <li>若數字只是 <strong>3 的倍數</strong>，輸出 <code>Fizz</code></li>
-                <li>若數字只是 <strong>5 的倍數</strong>，輸出 <code>Buzz</code></li>
-                <li>其餘情況，直接輸出該數字。</li>
-              </ul>
-            `,
+            id: "8-2",
+            title: "題 8-2：FizzBuzz 經典挑戰",
+            description: `<p>本題無需輸入。由 <strong>1 報數至 15</strong>：同時是 3 和 5 的倍數輸出 <code>FizzBuzz</code>；只是 3 的倍數輸出 <code>Fizz</code>；只是 5 的倍數輸出 <code>Buzz</code>；其餘輸出數字。</p>`,
             sampleInput: "(無輸入)",
             sampleOutput: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz",
-            starterCode: `# 請由 1 報數至 15 並按規則輸出 Fizz / Buzz / FizzBuzz\n`,
+            starterCode: `# 請完成 1 至 15 的 FizzBuzz 程式\n`,
             hints: [
-              "提示 1（條件優先順序）：必須把「同時是 3 和 5 的倍數」（i % 3 == 0 and i % 5 == 0）放在第一個 if 判斷！否則 15 會先被 3 的倍數攔截。",
-              "提示 2（多重分支）：接著使用 elif i % 3 == 0: 輸出 \"Fizz\"，再用 elif i % 5 == 0: 輸出 \"Buzz\"。",
-              "提示 3（其餘數字）：最後用 else: 輸出 print(i)，循環範圍請設為 range(1, 16)。"
+              "提示 1：必須把 i % 3 == 0 and i % 5 == 0 放在第一個 if 判斷。",
+              "提示 2：接著用 elif i % 3 == 0: 與 elif i % 5 == 0:。",
+              "提示 3：最後 else: 輸出 print(i)。"
             ],
             testCases: [
-              {
-                input: "",
-                expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz",
-                isPublic: true
-              }
+              { input: "", expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz", isPublic: true }
             ]
           },
           {
-            id: "4-9",
-            title: "題 4-9：及格人數統計器",
-            description: `
-              <p>請編寫一個統計班級及格人數的程式：</p>
-              <ol class="list-decimal list-inside space-y-1 ml-1">
-                <li>首先輸入一個正整數 <code>n</code>，代表學生人數。</li>
-                <li>接著使用 <code>for</code> 循環重複讀取 <code>n</code> 個學生的分數（整數）。</li>
-                <li>統計當中有多少位學生的分數<strong>及格（50 分或以上）</strong>，最後按以下格式輸出：</li>
-              </ol>
-              <p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded mt-1">Pass: &lt;及格人數&gt;</p>
-            `,
+            id: "8-3",
+            title: "題 8-3：及格人數統計器",
+            description: `<p>先輸入學生人數 <code>n</code>，接著依序讀取 <code>n</code> 個分數（整數），統計<strong>及格（50 分或以上）</strong>的人數，並輸出 <code>Pass: &lt;及格人數&gt;</code>。</p>`,
             sampleInput: "4\n45\n72\n50\n38",
             sampleOutput: "Pass: 2",
-            starterCode: `n = int(input())\ncount = 0\n\n# 請重複讀取 n 個分數並統計及格人數\n`,
+            starterCode: `n = int(input())\ncount = 0\n\n# 請讀取 n 個分數並統計及格人數\n`,
             hints: [
-              "提示 1（循環次數）：使用 for i in range(n): 即可讓循環準確重複執行 n 次。",
-              "提示 2（循環內讀取與判斷）：每次循環內先執行 score = int(input())，再用 if score >= 50: 將計數器 count = count + 1。",
-              "提示 3（輸出格式）：當所有分數都讀取並統計完畢後，在循環外面輸出 print(\"Pass:\", count)。"
+              "提示 1：使用 for i in range(n): 循環 n 次。",
+              "提示 2：每次讀取 score = int(input())，若 score >= 50 則 count = count + 1。",
+              "提示 3：循環結束後輸出 print(\"Pass:\", count)。"
             ],
             testCases: [
               { input: "4\n45\n72\n50\n38", expected: "Pass: 2", isPublic: true },
-              { input: "3\n80\n90\n100", expected: "Pass: 3", isPublic: false },
-              { input: "3\n10\n20\n49", expected: "Pass: 0", isPublic: false }
+              { input: "3\n80\n90\n100", expected: "Pass: 3", isPublic: false }
+            ]
+          },
+          {
+            id: "8-4",
+            title: "題 8-4：「逢三過關」遊戲",
+            description: `<p>輸入上限 <code>n</code>，由 1 報數至 <code>n</code>：凡是 <strong>3 的倍數</strong> 改為輸出 <code>PASS</code>，其餘直接輸出該數字。</p>`,
+            sampleInput: "7",
+            sampleOutput: "1\n2\nPASS\n4\n5\nPASS\n7",
+            starterCode: `n = int(input())\n\n# 請完成 1 至 n 的逢三過關程式\n`,
+            hints: [
+              "提示 1：使用 i % 3 == 0 判斷是否為 3 的倍數。",
+              "提示 2：循環範圍為 range(1, n + 1)。",
+              "提示 3：倍數輸出 \"PASS\"，否則輸出 i。"
+            ],
+            testCases: [
+              { input: "7", expected: "1\n2\nPASS\n4\n5\nPASS\n7", isPublic: true },
+              { input: "3", expected: "1\n2\nPASS", isPublic: false }
+            ]
+          },
+          {
+            id: "8-5",
+            title: "題 8-5：酷熱天氣日數統計器",
+            description: `<p>先輸入觀察天數 <code>days</code>，接著讀取每天的最高氣溫（整數）。統計有多少天的氣溫達到<strong>酷熱水平（33 度或以上）</strong>，並輸出 <code>Hot days: &lt;日數&gt;</code>。</p>`,
+            sampleInput: "5\n31\n33\n35\n29\n34",
+            sampleOutput: "Hot days: 3",
+            starterCode: `days = int(input())\nhot = 0\n\n# 請統計氣溫 >= 33 的日數\n`,
+            hints: [
+              "提示 1：使用 for i in range(days): 讀取每天氣溫。",
+              "提示 2：若 temp >= 33 則 hot = hot + 1。",
+              "提示 3：結束後輸出 print(\"Hot days:\", hot)。"
+            ],
+            testCases: [
+              { input: "5\n31\n33\n35\n29\n34", expected: "Hot days: 3", isPublic: true },
+              { input: "3\n28\n30\n32", expected: "Hot days: 0", isPublic: false }
+            ]
+          },
+          {
+            id: "8-6",
+            title: "題 8-6：正整數所有因數列印器",
+            description: `<p>輸入一個正整數 <code>n</code>，使用 <code>for</code> 循環由 <code>1</code> 檢查至 <code>n</code>，依序輸出所有能整除 <code>n</code> 的<strong>正因數</strong>（每行一個）。</p>`,
+            sampleInput: "12",
+            sampleOutput: "1\n2\n3\n4\n6\n12",
+            starterCode: `n = int(input())\n\n# 請找出並輸出 n 的所有正因數\n`,
+            hints: [
+              "提示 1：若 n % i == 0，代表 i 能整除 n，即 i 是 n 的因數。",
+              "提示 2：循環範圍設為 for i in range(1, n + 1):。",
+              "提示 3：符合條件時執行 print(i)。"
+            ],
+            testCases: [
+              { input: "12", expected: "1\n2\n3\n4\n6\n12", isPublic: true },
+              { input: "7", expected: "1\n7", isPublic: false }
+            ]
+          },
+          {
+            id: "8-7",
+            title: "題 8-7：及格與優異成績雙重統計",
+            description: `<p>先輸入學生人數 <code>n</code>，再讀取 <code>n</code> 個分數。分兩行輸出<strong>優異（85 分或以上）</strong>人數及<strong>及格（50 分或以上，包含優異者）</strong>人數：</p><p class="font-mono-code text-xs bg-slate-200/70 p-2 rounded">Distinction: &lt;優異人數&gt;<br>Pass: &lt;及格人數&gt;</p>`,
+            sampleInput: "4\n90\n65\n40\n85",
+            sampleOutput: "Distinction: 2\nPass: 3",
+            starterCode: `n = int(input())\ndist = 0\npassed = 0\n\n# 請同時統計優異與及格人數\n`,
+            hints: [
+              "提示 1：注意優異（>= 85）的同學同時也屬於及格（>= 50），因此兩個計數器都要加 1。",
+              "提示 2：使用兩個獨立的 if 判斷：if score >= 85: 和 if score >= 50:。",
+              "提示 3：循環結束後分兩行輸出結果。"
+            ],
+            testCases: [
+              { input: "4\n90\n65\n40\n85", expected: "Distinction: 2\nPass: 3", isPublic: true },
+              { input: "2\n30\n49", expected: "Distinction: 0\nPass: 0", isPublic: false }
+            ]
+          },
+          {
+            id: "8-8",
+            title: "題 8-8：一組數字中的最大值尋找器",
+            description: `<p>先輸入正整數 <code>n</code>，接著依序讀取 <code>n</code> 個正整數，找出並輸出當中<strong>最大</strong>的數字。</p>`,
+            sampleInput: "4\n23\n89\n45\n67",
+            sampleOutput: "89",
+            starterCode: `n = int(input())\nmax_num = 0\n\n# 請讀取 n 個正整數並找出最大值\n`,
+            hints: [
+              "提示 1：每次讀取 num = int(input()) 後，檢查 if num > max_num:。",
+              "提示 2：若條件成立，便將 max_num 更新為 num（max_num = num）。",
+              "提示 3：循環結束後輸出 print(max_num)。"
+            ],
+            testCases: [
+              { input: "4\n23\n89\n45\n67", expected: "89", isPublic: true },
+              { input: "3\n10\n10\n5", expected: "10", isPublic: false }
+            ]
+          }
+        ]
+      },
+      {
+        unitId: "u9",
+        lesson: "單元 9：綜合性挑戰題（跨單元實戰）",
+        origin: "綜合應用第2至第4課所有核心語法",
+        problems: [
+          {
+            id: "9-1",
+            title: "挑戰 1：智能停車場分段收費系統",
+            description: `<p>綜合應用 <code>while</code> 輸入驗證與 <code>if/elif/else</code> 分段計費：</p><ol class="list-decimal list-inside space-y-1 ml-1"><li>重複讀取停泊小時數 <code>hours</code>（整數），若 <code>hours &lt;= 0</code> 輸出 <code>Invalid hours</code> 並重讀。</li><li>讀取會員資格字串 <code>member</code>（<code>"Y"</code> 或 <code>"N"</code>）。</li><li>首 2 小時每小時 <code>$20</code>，第 3 小時起每小時 <code>$15</code>；若為會員（<code>"Y"</code>），總車費再減 <code>$10</code>（最低為 <code>$0</code>）。</li><li>輸出最終費用：<code>Fee: $&lt;費用&gt;</code></li></ol>`,
+            sampleInput: "0\n4\nY",
+            sampleOutput: "Invalid hours\nFee: $60",
+            starterCode: `hours = int(input())\n# 1. 請先用 while 驗證 hours > 0\n\nmember = input()\n# 2. 請計算分段停車費與會員減免，並輸出 Fee: $<費用>\n`,
+            hints: [
+              "提示 1：先用 while hours <= 0: 攔截無效小時數並重新讀取。",
+              "提示 2：若 hours <= 2，費用為 hours * 20；否則為 2 * 20 + (hours - 2) * 15。",
+              "提示 3：若 member == \"Y\" 則 fee = fee - 10，並確保 if fee < 0: fee = 0。"
+            ],
+            testCases: [
+              { input: "0\n4\nY", expected: "Invalid hours\nFee: $60", isPublic: true },
+              { input: "1\nY", expected: "Fee: $10", isPublic: false },
+              { input: "3\nN", expected: "Fee: $55", isPublic: false }
+            ]
+          },
+          {
+            id: "9-2",
+            title: "挑戰 2：中三級成績分析與獎狀頒發器",
+            description: `<p>綜合應用 <code>for</code> 循環、輸入驗證、平均分與 <code>and</code> 邏輯判斷：</p><ol class="list-decimal list-inside space-y-1 ml-1"><li>連續讀取 <strong>4 科</strong>成績（整數），若任何一科分數不在 <code>0–100</code> 範圍內，輸出 <code>Invalid score</code> 並重新讀取該科分數直至有效。</li><li>計算四科平均分 <code>avg</code> 並記錄最低分 <code>min_s</code>。</li><li>若平均分 <code>&gt;= 80</code> <strong>且</strong> 所有科目均 <code>&gt;= 70</code>，頒發 <code>Academic Excellence</code>；否則若平均分 <code>&gt;= 50</code>，輸出 <code>Pass</code>；否則輸出 <code>Retain</code>。</li></ol><p>分兩行輸出平均分與結果：<code>Average: &lt;平均分&gt;</code> 與獎項結果。</p>`,
+            sampleInput: "85\n105\n80\n90\n75",
+            sampleOutput: "Average: 82.5\nAcademic Excellence",
+            starterCode: `total = 0\nmin_s = 101\n\n# 請使用 for 循環讀取 4 科有效成績，並判斷獎狀等級\n`,
+            hints: [
+              "提示 1：在 for i in range(4): 內，讀取 score 後用 while score < 0 or score > 100: 進行重試驗證。",
+              "提示 2：每次取得有效 score 後，累加 total += score，並用 if score < min_s: min_s = score 追蹤最低分。",
+              "提示 3：平均分 avg = total / 4，再用 if avg >= 80 and min_s >= 70: 判斷是否獲頒優異獎。"
+            ],
+            testCases: [
+              { input: "85\n105\n80\n90\n75", expected: "Average: 82.5\nAcademic Excellence", isPublic: true },
+              { input: "95\n95\n95\n60", expected: "Average: 86.25\nPass", isPublic: false },
+              { input: "40\n50\n45\n45", expected: "Average: 45.0\nRetain", isPublic: false }
+            ]
+          },
+          {
+            id: "9-3",
+            title: "挑戰 3：自動售賣機投幣與找續系統",
+            description: `<p>綜合應用條件定價、<code>while</code> 投幣累計及整除/餘數運算：</p><ol class="list-decimal list-inside space-y-1 ml-1"><li>輸入飲品編號 <code>item</code>：<code>1</code> 號可樂（$12）、<code>2</code> 號綠茶（$10）、<code>3</code> 號咖啡（$15）。</li><li>重複讀取顧客投入的硬幣金額（整數），每次累加至已投金額，直到<strong>已投金額大於或等於飲品價格</strong>為止（未足夠前每投一次輸出 <code>Inserted: $&lt;目前總額&gt;</code>）。</li><li>金額足夠後，輸出 <code>Dispensing item</code> 並輸出找贖金額 <code>Change: $&lt;找贖&gt;</code>。</li></ol>`,
+            sampleInput: "1\n5\n5\n5",
+            sampleOutput: "Inserted: $5\nInserted: $10\nDispensing item\nChange: $3",
+            starterCode: `item = int(input())\n# 1. 根據 item 設定飲品價格 price\n\npaid = 0\n# 2. 使用 while paid < price: 持續讀取硬幣並處理輸出\n`,
+            hints: [
+              "提示 1：用 if / elif 設定 price（1->12, 2->10, 3->15）。",
+              "提示 2：在 while paid < price: 內讀取 coin = int(input()) 並 paid = paid + coin。",
+              "提示 3：若 paid 仍 < price 則輸出 \"Inserted: $\" + str(paid)；跳出循環後輸出出貨與找贖。"
+            ],
+            testCases: [
+              { input: "1\n5\n5\n5", expected: "Inserted: $5\nInserted: $10\nDispensing item\nChange: $3", isPublic: true },
+              { input: "2\n10", expected: "Dispensing item\nChange: $0", isPublic: false }
+            ]
+          },
+          {
+            id: "9-4",
+            title: "挑戰 4：三次登入限制安全門鎖系統",
+            description: `<p>綜合應用 <code>while</code> 次數上限控制與布爾狀態旗標：</p><ol class="list-decimal list-inside space-y-1 ml-1"><li>正確密碼為 <code>"YY2#2026"</code>，使用者最多只有 <strong>3 次</strong>嘗試機會。</li><li>每次讀取輸入字串：若正確則輸出 <code>Door Unlocked!</code> 並立即結束；若錯誤且仍有剩餘次數，輸出 <code>Wrong! Attempts left: &lt;剩餘次數&gt;</code>。</li><li>若 3 次皆輸入錯誤，最後輸出 <code>System Locked!</code>。</li></ol>`,
+            sampleInput: "1234\nabcd\n0000",
+            sampleOutput: "Wrong! Attempts left: 2\nWrong! Attempts left: 1\nSystem Locked!",
+            starterCode: `secret = "YY2#2026"\nleft = 3\nunlocked = False\n\n# 請使用 while left > 0 and not unlocked: 控制最多 3 次嘗試\n`,
+            hints: [
+              "提示 1：在 while left > 0 and not unlocked: 內讀取 guess = input()。",
+              "提示 2：若 guess == secret，設 unlocked = True 並輸出 \"Door Unlocked!\"。",
+              "提示 3：若猜錯，將 left = left - 1；若 left > 0 輸出剩餘次數，否則輸出 \"System Locked!\"。"
+            ],
+            testCases: [
+              { input: "1234\nabcd\n0000", expected: "Wrong! Attempts left: 2\nWrong! Attempts left: 1\nSystem Locked!", isPublic: true },
+              { input: "wrong\nYY2#2026", expected: "Wrong! Attempts left: 2\nDoor Unlocked!", isPublic: false }
+            ]
+          },
+          {
+            id: "9-5",
+            title: "挑戰 5：自訂區間 FizzBuzz 統計報告",
+            description: `<p>綜合應用自訂範圍 <code>for</code> 循環、多重條件分支及多項計數器：</p><ol class="list-decimal list-inside space-y-1 ml-1"><li>輸入兩個正整數 <code>start</code> 與 <code>end</code>（<code>start &lt;= end</code>）。</li><li>由 <code>start</code> 至 <code>end</code> 逐一輸出：同時為 3 和 5 倍數輸出 <code>FizzBuzz</code>；僅 3 倍數輸出 <code>Fizz</code>；僅 5 倍數輸出 <code>Buzz</code>；其餘輸出數字。</li><li>全部輸出完畢後，在最後一行輸出統計總結：<code>Summary - Fizz: &lt;次數&gt;, Buzz: &lt;次數&gt;, FizzBuzz: &lt;次數&gt;</code></li></ol>`,
+            sampleInput: "1\n6",
+            sampleOutput: "1\n2\nFizz\n4\nBuzz\nFizz\nSummary - Fizz: 2, Buzz: 1, FizzBuzz: 0",
+            starterCode: `start = int(input())\nend = int(input())\nf_cnt = 0\nb_cnt = 0\nfb_cnt = 0\n\n# 請在循環輸出同時累計三種標籤出現次數\n`,
+            hints: [
+              "提示 1：建立三個計數器 f_cnt, b_cnt, fb_cnt，在對應的 if/elif 分支中各自加 1。",
+              "提示 2：注意 FizzBuzz 的次數不要重複算進 Fizz 或 Buzz 中（使用 if / elif / elif / else 結構即可避免重複）。",
+              "提示 3：最後一行注意標點符號與空格：Summary - Fizz: 2, Buzz: 1, FizzBuzz: 0。"
+            ],
+            testCases: [
+              { input: "1\n6", expected: "1\n2\nFizz\n4\nBuzz\nFizz\nSummary - Fizz: 2, Buzz: 1, FizzBuzz: 0", isPublic: true },
+              { input: "14\n15", expected: "14\nFizzBuzz\nSummary - Fizz: 0, Buzz: 0, FizzBuzz: 1", isPublic: false }
             ]
           }
         ]
@@ -1118,16 +1761,17 @@ The cube of 3 is 27
     // =========================================================================
     let currentProblemIndex = 0;
     let currentFilter = 'all';
+    let currentSearchQuery = '';
+    let collapsedUnits = {}; // unitId -> boolean
     let revealedHintsCount = 0;
     let pyodideInstance = null;
     let pyodideReady = false;
+    let pendingTeacherAction = null; // 'export' | 'clear'
 
     // Student Identity & Progress State
     let currentStudent = null; // { classId: '3A', number: 1, key: '3A-01' }
-    // Map of problemId -> { solved: boolean, attempts: number, code: string }
-    let studentProgress = {};
-    // All students records map: studentKey -> { classId, number, solvedCount, totalAttempts, updatedAt }
-    let allStudentsLeaderboard = {};
+    let studentProgress = {}; // problemId -> { solved: boolean, attempts: number, code: string }
+    let allStudentsLeaderboard = {}; // studentKey -> { classId, number, solvedCount, totalAttempts, updatedAt, problems }
     let leaderboardClassFilter = 'ALL';
 
     // Firebase references
@@ -1135,13 +1779,13 @@ The cube of 3 is 27
     let auth = null;
     let firebaseUser = null;
     let isCloudEnabled = false;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'yy2-s3-python-grader';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'yy2-s3-python-grader-69';
 
-    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v1';
-    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v1';
+    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_69_v1';
+    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_69_v1';
 
     // =========================================================================
-    // 3. 初始化 Firebase (若環境有提供設定則自動啟用雲端多人排行榜)
+    // 3. 初始化 Firebase 雲端同步
     // =========================================================================
     async function initCloudSync() {
       try {
@@ -1151,7 +1795,6 @@ The cube of 3 is 27
           auth = getAuth(app);
           db = getFirestore(app);
 
-          // RULE 3: Auth BEFORE queries
           if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
             await signInWithCustomToken(auth, __initial_auth_token);
           } else {
@@ -1177,35 +1820,29 @@ The cube of 3 is 27
 
     function subscribeToLeaderboard() {
       if (!db || !firebaseUser) return;
-      // RULE 1 & RULE 2: Strict public path, simple collection query without complex orderBy
       const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'student_records');
       onSnapshot(
         colRef,
         (snapshot) => {
-          const remoteMap = {};
+          const latestRemote = {};
           snapshot.forEach((docSnap) => {
             const data = docSnap.data();
             if (data && data.studentKey) {
-              remoteMap[data.studentKey] = data;
+              latestRemote[data.studentKey] = data;
+              if (currentStudent && data.studentKey === currentStudent.key && data.problems) {
+                Object.keys(data.problems).forEach((pid) => {
+                  const remoteP = data.problems[pid];
+                  const localP = studentProgress[pid] || { solved: false, attempts: 0, code: '' };
+                  studentProgress[pid] = {
+                    solved: localP.solved || remoteP.solved,
+                    attempts: Math.max(localP.attempts || 0, remoteP.attempts || 0),
+                    code: localP.code || remoteP.code || ''
+                  };
+                });
+              }
             }
           });
-          allStudentsLeaderboard = remoteMap;
-          if (currentStudent) {
-            const myRemote = remoteMap[currentStudent.key];
-            if (myRemote && myRemote.problems) {
-              Object.keys(myRemote.problems).forEach((pid) => {
-                const remoteP = myRemote.problems[pid];
-                const localP = studentProgress[pid] || { solved: false, attempts: 0, code: '' };
-                studentProgress[pid] = {
-                  solved: localP.solved || remoteP.solved,
-                  attempts: Math.max(localP.attempts || 0, remoteP.attempts || 0),
-                  code: localP.code || remoteP.code || ''
-                };
-              });
-            } else if (!myRemote) {
-              studentProgress = {};
-            }
-          }
+          allStudentsLeaderboard = latestRemote;
           saveLocalAllRecords();
           updateStudentStatsUI();
           renderSidebar();
@@ -1242,7 +1879,6 @@ The cube of 3 is 27
     async function persistStudentRecord() {
       if (!currentStudent) return;
 
-      // Calculate totals
       let solvedCount = 0;
       let totalAttempts = 0;
       const problemsSummary = {};
@@ -1271,7 +1907,6 @@ The cube of 3 is 27
       allStudentsLeaderboard[currentStudent.key] = recordPayload;
       saveLocalAllRecords();
 
-      // Sync to Firestore if available
       if (isCloudEnabled && db && firebaseUser) {
         try {
           const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'student_records', currentStudent.key);
@@ -1318,12 +1953,12 @@ The cube of 3 is 27
         numSelect.appendChild(opt);
       }
 
-      // Restore previous session if exists
       try {
         const savedUser = localStorage.getItem(LOCAL_CURRENT_USER_KEY);
         if (savedUser) {
           const parsed = JSON.parse(savedUser);
-          if (parsed.classId && parsed.number) {
+          const allowedClasses = ['3A', '3B', '3C', '3E'];
+          if (allowedClasses.includes(parsed.classId) && parsed.number) {
             document.getElementById('classSelect').value = parsed.classId;
             document.getElementById('numberSelect').value = parsed.number;
             applyStudentSession(parsed.classId, parseInt(parsed.number, 10), false);
@@ -1349,13 +1984,11 @@ The cube of 3 is 27
 
       localStorage.setItem(LOCAL_CURRENT_USER_KEY, JSON.stringify(currentStudent));
 
-      // Load existing progress for this student if present
       const existing = allStudentsLeaderboard[key];
       studentProgress = {};
       if (existing && existing.problems) {
         studentProgress = JSON.parse(JSON.stringify(existing.problems));
       } else {
-        // Initialize blank record in leaderboard so student appears immediately
         persistStudentRecord();
       }
 
@@ -1392,67 +2025,109 @@ The cube of 3 is 27
     }
 
     // =========================================================================
-    // 6. 題庫渲染、切換與提示系統
+    // 6. 題庫渲染（可折疊單元、篩選、搜尋）、切換與提示系統
     // =========================================================================
+    window.handleProblemSearch = function (val) {
+      currentSearchQuery = val.trim().toLowerCase();
+      renderSidebar();
+    };
+
+    window.toggleUnitCollapse = function (unitId) {
+      collapsedUnits[unitId] = !collapsedUnits[unitId];
+      renderSidebar();
+    };
+
     function renderSidebar() {
       const container = document.getElementById('problemListContainer');
       container.innerHTML = '';
 
+      let totalMatched = 0;
+
       UNITS.forEach((unit) => {
         const filteredProbs = unit.problems.filter((p) => {
           const isSolved = !!(studentProgress[p.id] && studentProgress[p.id].solved);
-          if (currentFilter === 'solved') return isSolved;
-          if (currentFilter === 'unsolved') return !isSolved;
+          if (currentFilter === 'solved' && !isSolved) return false;
+          if (currentFilter === 'unsolved' && isSolved) return false;
+          if (currentSearchQuery) {
+            const hay = `${p.id} ${p.title} ${unit.lesson}`.toLowerCase();
+            if (!hay.includes(currentSearchQuery)) return false;
+          }
           return true;
         });
 
         if (filteredProbs.length === 0) return;
+        totalMatched += filteredProbs.length;
+
+        const solvedInUnit = unit.problems.filter(p => studentProgress[p.id] && studentProgress[p.id].solved).length;
+        const isCollapsed = !!collapsedUnits[unit.unitId] && !currentSearchQuery;
 
         const unitBox = document.createElement('div');
         unitBox.className = "border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50";
 
-        const unitHeader = document.createElement('div');
-        unitHeader.className = "px-3 py-2 bg-slate-100/90 border-b border-slate-200 text-xs font-bold text-slate-700";
-        unitHeader.textContent = unit.lesson;
+        const unitHeader = document.createElement('button');
+        unitHeader.type = "button";
+        unitHeader.onclick = () => toggleUnitCollapse(unit.unitId);
+        unitHeader.className = "w-full px-3 py-2.5 bg-slate-100/90 hover:bg-slate-200/70 border-b border-slate-200 text-xs font-bold text-slate-700 flex items-center justify-between gap-2 text-left transition";
+        unitHeader.innerHTML = `
+          <span class="truncate">${unit.lesson}</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="text-[10px] px-1.5 py-0.5 rounded-full ${solvedInUnit === unit.problems.length ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-500 border border-slate-200'}">
+              ${solvedInUnit}/${unit.problems.length}
+            </span>
+            <i class="fa-solid ${isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'} text-[10px] text-slate-400"></i>
+          </div>
+        `;
         unitBox.appendChild(unitHeader);
 
-        const list = document.createElement('div');
-        list.className = "divide-y divide-slate-100 bg-white";
+        if (!isCollapsed) {
+          const list = document.createElement('div');
+          list.className = "divide-y divide-slate-100 bg-white";
 
-        filteredProbs.forEach((prob) => {
-          const globalIdx = ALL_PROBLEMS.findIndex(item => item.id === prob.id);
-          const isActive = globalIdx === currentProblemIndex;
-          const rec = studentProgress[prob.id] || { solved: false, attempts: 0 };
+          filteredProbs.forEach((prob) => {
+            const globalIdx = ALL_PROBLEMS.findIndex(item => item.id === prob.id);
+            const isActive = globalIdx === currentProblemIndex;
+            const rec = studentProgress[prob.id] || { solved: false, attempts: 0 };
 
-          const btn = document.createElement('button');
-          btn.onclick = () => {
-            saveCurrentEditorDraft();
-            loadProblem(globalIdx);
-            if (window.innerWidth < 1024) toggleSidebar();
-          };
-          btn.className = `w-full text-left px-3 py-2.5 text-xs flex items-center justify-between gap-2 transition ${
-            isActive ? 'bg-indigo-50 text-indigo-800 font-bold border-l-4 border-indigo-600' : 'hover:bg-slate-50 text-slate-700'
-          }`;
+            const btn = document.createElement('button');
+            btn.onclick = () => {
+              saveCurrentEditorDraft();
+              loadProblem(globalIdx);
+              if (window.innerWidth < 1024) toggleSidebar();
+            };
+            btn.className = `w-full text-left px-3 py-2.5 text-xs flex items-center justify-between gap-2 transition ${
+              isActive ? 'bg-indigo-50 text-indigo-800 font-bold border-l-4 border-indigo-600' : 'hover:bg-slate-50 text-slate-700'
+            }`;
 
-          const statusIcon = rec.solved
-            ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm shrink-0"></i>'
-            : rec.attempts > 0
-              ? '<i class="fa-solid fa-circle-dot text-amber-500 text-sm shrink-0"></i>'
-              : '<i class="fa-regular fa-circle text-slate-300 text-sm shrink-0"></i>';
+            const statusIcon = rec.solved
+              ? '<i class="fa-solid fa-circle-check text-emerald-500 text-sm shrink-0"></i>'
+              : rec.attempts > 0
+                ? '<i class="fa-solid fa-circle-dot text-amber-500 text-sm shrink-0"></i>'
+                : '<i class="fa-regular fa-circle text-slate-300 text-sm shrink-0"></i>';
 
-          btn.innerHTML = `
-            <div class="flex items-center gap-2 min-w-0">
-              ${statusIcon}
-              <span class="truncate">${prob.title}</span>
-            </div>
-            ${rec.attempts > 0 ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 shrink-0">${rec.attempts}次</span>` : ''}
-          `;
-          list.appendChild(btn);
-        });
+            btn.innerHTML = `
+              <div class="flex items-center gap-2 min-w-0">
+                ${statusIcon}
+                <span class="truncate">${prob.title}</span>
+              </div>
+              ${rec.attempts > 0 ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 shrink-0">${rec.attempts}次</span>` : ''}
+            `;
+            list.appendChild(btn);
+          });
 
-        unitBox.appendChild(list);
+          unitBox.appendChild(list);
+        }
+
         container.appendChild(unitBox);
       });
+
+      if (totalMatched === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 px-3 text-xs text-slate-400">
+            <i class="fa-solid fa-folder-open text-2xl mb-2 block text-slate-300"></i>
+            找不到符合條件的題目
+          </div>
+        `;
+      }
     }
 
     window.setProblemFilter = function (filterType) {
@@ -1460,9 +2135,9 @@ The cube of 3 is 27
       ['all', 'unsolved', 'solved'].forEach((type) => {
         const el = document.getElementById(`filter-${type}`);
         if (type === filterType) {
-          el.className = "px-2.5 py-1 rounded-lg font-medium bg-indigo-600 text-white transition";
+          el.className = "flex-1 px-2 py-1 rounded-lg font-medium bg-indigo-600 text-white transition";
         } else {
-          el.className = "px-2.5 py-1 rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+          el.className = "flex-1 px-2 py-1 rounded-lg font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
         }
       });
       renderSidebar();
@@ -1473,34 +2148,37 @@ The cube of 3 is 27
       currentProblemIndex = index;
       const prob = ALL_PROBLEMS[index];
 
+      // Auto-expand the active problem's unit
+      collapsedUnits[prob.unitId] = false;
+
       document.getElementById('probLessonTag').textContent = prob.lesson;
       document.getElementById('probTitle').textContent = prob.title;
       document.getElementById('probOriginRef').innerHTML = `<i class="fa-solid fa-link text-indigo-400"></i><span>${prob.origin}</span>`;
       document.getElementById('probDescription').innerHTML = prob.description;
       document.getElementById('probSampleInput').textContent = prob.sampleInput;
       document.getElementById('probSampleOutput').textContent = prob.sampleOutput;
-      document.getElementById('probCounterText').textContent = `${index + 1} / ${ALL_PROBLEMS.length}`;
+      document.getElementById('probCounterText').textContent = `第 ${index + 1} / ${ALL_PROBLEMS.length} 題`;
 
-      document.getElementById('prevProbBtn').disabled = index === 0;
-      document.getElementById('nextProbBtn').disabled = index === ALL_PROBLEMS.length - 1;
+      document.getElementById('prevProbBtn').disabled = (index === 0);
+      document.getElementById('nextProbBtn').disabled = (index === ALL_PROBLEMS.length - 1);
 
       // Reset Hints UI
       revealedHintsCount = 0;
       const hintsContainer = document.getElementById('hintsContainer');
       hintsContainer.innerHTML = `
-        <p id="noHintPlaceholder" class="text-xs text-slate-400 italic bg-slate-50 p-3 rounded-xl border border-dashed border-slate-200">
-          遇到困難嗎？點擊右上角「顯示提示」按鈕獲取循序漸進的解題方向。
-        </p>
+        <div id="noHintPlaceholder" class="text-xs text-slate-400 italic bg-slate-50 rounded-xl p-3 border border-dashed border-slate-200 text-center">
+          遇到困難時可點擊右上角「顯示提示」按鈕，系統會循序漸進引導你思考解題方向。
+        </div>
       `;
       const hintBtn = document.getElementById('revealHintBtn');
       hintBtn.disabled = false;
       hintBtn.classList.remove('opacity-50', 'cursor-not-allowed');
       document.getElementById('revealHintBtnText').textContent = `顯示提示 1 / ${prob.hints.length}`;
 
-      // Load saved code or starter template
+      // Load saved draft or starter template
       const editor = document.getElementById('codeEditor');
       const savedCode = studentProgress[prob.id] && studentProgress[prob.id].code;
-      editor.value = savedCode && savedCode.trim().length > 0 ? savedCode : prob.starterCode;
+      editor.value = (savedCode !== undefined && savedCode !== '') ? savedCode : prob.starterCode;
       updateLineNumbers();
 
       // Reset Console View
@@ -1571,7 +2249,7 @@ The cube of 3 is 27
       document.getElementById('codeEditor').value = prob.starterCode;
       updateLineNumbers();
       saveCurrentEditorDraft();
-      showToast("已還原為預設程式碼模板", "info");
+      showToast("已重設為預設程式碼模板", "info");
     };
 
     function saveCurrentEditorDraft() {
@@ -1625,7 +2303,6 @@ The cube of 3 is 27
         updateLineNumbers();
         saveCurrentEditorDraft();
       } else if (e.key === 'Enter') {
-        // Smart auto-indent after colon ':'
         const start = codeEditorEl.selectionStart;
         const textBefore = codeEditorEl.value.substring(0, start);
         const currentLine = textBefore.split('\n').pop();
@@ -1648,7 +2325,6 @@ The cube of 3 is 27
       const inputs = inputStr ? inputStr.split('\n') : [];
 
       if (pyodideReady && pyodideInstance) {
-        // Use genuine CPython via Pyodide with isolated stdout & mock input()
         const wrapperCode = `
 import sys, io, builtins
 
@@ -1684,12 +2360,10 @@ finally:
         resProxy.destroy();
         return { output: resArr[0], error: resArr[1] };
       } else {
-        // Fallback lightweight JS-based Python subset interpreter if CDN blocked
         return runFallbackPythonInterpreter(userCode, inputs);
       }
     }
 
-    // Fallback Python subset interpreter for offline/restricted network environments
     function runFallbackPythonInterpreter(code, inputs) {
       try {
         let inputIdx = 0;
@@ -1715,7 +2389,10 @@ finally:
           if (expr.startsWith('str(') && expr.endsWith(')')) {
             return String(evalExpr(expr.slice(4, -1)));
           }
-          // Replace python operators and variables
+          if (expr.startsWith('len(') && expr.endsWith(')')) {
+            const innerVal = evalExpr(expr.slice(4, -1));
+            return innerVal ? innerVal.length : 0;
+          }
           let jsExpr = expr
             .replace(/\band\b/g, '&&')
             .replace(/\bor\b/g, '||')
@@ -1731,7 +2408,7 @@ finally:
           let i = startIdx;
           let steps = 0;
           while (i < lines.length) {
-            if (++steps > 2000) throw new Error("RuntimeError: 偵測到無限循環 (Infinite Loop)");
+            if (++steps > 3000) throw new Error("RuntimeError: 偵測到無限循環 (Infinite Loop)");
             const raw = lines[i];
             if (!raw.trim() || raw.trim().startsWith('#')) {
               i++;
@@ -1750,7 +2427,6 @@ finally:
               if (!inner) {
                 outputs.push('');
               } else {
-                // Split top-level commas
                 const parts = [];
                 let depth = 0, inStr = false, strChar = '', cur = '';
                 for (let c of inner) {
@@ -1780,7 +2456,7 @@ finally:
               }
               let loopGuard = 0;
               while (evalExpr(condStr)) {
-                if (++loopGuard > 1000) throw new Error("RuntimeError: while 循環次數過多（可能出現無限循環）");
+                if (++loopGuard > 1500) throw new Error("RuntimeError: while 循環次數過多（可能出現無限循環）");
                 execBlock(lines.slice(0, blockEnd), i + 1, baseIndent + 4);
               }
               i = blockEnd;
@@ -1811,7 +2487,6 @@ finally:
               }
               i = blockEnd;
             } else if (stmt.startsWith('if ') && stmt.endsWith(':')) {
-              // Collect if / elif / else chain
               const branches = [];
               let curIdx = i;
               while (curIdx < lines.length) {
@@ -1840,7 +2515,15 @@ finally:
                 }
               }
               i = curIdx;
-            } else if (stmt.includes('=') && !stmt.includes('==')) {
+            } else if (stmt.includes('+=') ) {
+              const [lhs, rhs] = stmt.split('+=');
+              vars[lhs.trim()] = (vars[lhs.trim()] || 0) + evalExpr(rhs);
+              i++;
+            } else if (stmt.includes('-=')) {
+              const [lhs, rhs] = stmt.split('-=');
+              vars[lhs.trim()] = (vars[lhs.trim()] || 0) - evalExpr(rhs);
+              i++;
+            } else if (stmt.includes('=') && !stmt.includes('==') && !stmt.includes('!=') && !stmt.includes('<=') && !stmt.includes('>=')) {
               const eqPos = stmt.indexOf('=');
               const varName = stmt.slice(0, eqPos).trim();
               const rhs = stmt.slice(eqPos + 1).trim();
@@ -1884,7 +2567,6 @@ finally:
       runBtn.disabled = true;
       runBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>批改中...</span>';
 
-      // Increment attempt counter
       if (!studentProgress[prob.id]) {
         studentProgress[prob.id] = { solved: false, attempts: 0, code: userCode };
       }
@@ -1954,7 +2636,6 @@ finally:
 
       consoleArea.innerHTML = resultsHTML.join('');
 
-      // Save progress & update UI
       await persistStudentRecord();
       updateCurrentProblemBadges();
       updateStudentStatsUI();
@@ -1972,7 +2653,7 @@ finally:
     }
 
     // =========================================================================
-    // 9. 全級即時排行榜與 CSV 匯出
+    // 9. 全級即時排行榜、教師密碼驗證 ('chikuwa')、CSV 匯出與清除功能
     // =========================================================================
     window.openLeaderboard = function () {
       document.getElementById('leaderboardModal').classList.remove('hidden');
@@ -2000,7 +2681,6 @@ finally:
       if (leaderboardClassFilter !== 'ALL') {
         list = list.filter(item => item.classId === leaderboardClassFilter);
       }
-      // Sort: 1. solvedCount DESC, 2. totalAttempts ASC, 3. classId ASC, 4. number ASC
       list.sort((a, b) => {
         if (b.solvedCount !== a.solvedCount) return b.solvedCount - a.solvedCount;
         if (a.totalAttempts !== b.totalAttempts) return a.totalAttempts - b.totalAttempts;
@@ -2052,7 +2732,7 @@ finally:
             </td>
             <td class="py-3 px-4">
               <div class="flex items-center gap-2.5">
-                <span class="font-bold text-emerald-700 w-12">${st.solvedCount} / ${ALL_PROBLEMS.length}</span>
+                <span class="font-bold text-emerald-700 w-14">${st.solvedCount} / ${ALL_PROBLEMS.length}</span>
                 <div class="flex-1 max-w-[140px] h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div class="h-full bg-emerald-500 rounded-full" style="width: ${pct}%"></div>
                 </div>
@@ -2065,7 +2745,54 @@ finally:
       }).join('');
     }
 
-    window.exportLeaderboardCSV = function () {
+    // Teacher Password Gate ('chikuwa')
+    window.requestTeacherAuth = function (actionType) {
+      pendingTeacherAction = actionType;
+      const titleEl = document.getElementById('teacherAuthTitle');
+      const descEl = document.getElementById('teacherAuthDesc');
+      const inputEl = document.getElementById('teacherPasswordInput');
+      const errorEl = document.getElementById('teacherAuthError');
+
+      if (actionType === 'export') {
+        titleEl.textContent = '匯出成績 CSV — 教師驗證';
+        descEl.textContent = '匯出全級學生練習進度與嘗試次數總表僅限老師使用，請輸入教師密碼：';
+      } else {
+        titleEl.textContent = '清除所有紀錄 — 教師驗證';
+        descEl.textContent = '警告：此操作將會清空排行榜內所有學生的進度及嘗試紀錄且無法復原！請輸入教師密碼確認：';
+      }
+
+      inputEl.value = '';
+      errorEl.classList.add('hidden');
+      document.getElementById('teacherAuthModal').classList.remove('hidden');
+      setTimeout(() => inputEl.focus(), 50);
+    };
+
+    window.closeTeacherAuthModal = function () {
+      document.getElementById('teacherAuthModal').classList.add('hidden');
+      pendingTeacherAction = null;
+    };
+
+    window.confirmTeacherAuth = async function () {
+      const pwd = document.getElementById('teacherPasswordInput').value;
+      const errorEl = document.getElementById('teacherAuthError');
+
+      if (pwd !== 'chikuwa') {
+        errorEl.classList.remove('hidden');
+        document.getElementById('teacherPasswordInput').select();
+        return;
+      }
+
+      const action = pendingTeacherAction;
+      closeTeacherAuthModal();
+
+      if (action === 'export') {
+        executeExportLeaderboardCSV();
+      } else if (action === 'clear') {
+        await executeClearAllRecords();
+      }
+    };
+
+    function executeExportLeaderboardCSV() {
       const list = getSortedLeaderboardList();
       if (list.length === 0) {
         showToast("目前沒有可匯出的成績資料", "warning");
@@ -2085,98 +2812,38 @@ finally:
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `圓玄二中_中三Python練習成績表_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `圓玄二中_中三Python練習成績表(69題)_${new Date().toISOString().slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("已成功匯出 CSV 成績表！", "success");
-    };
+      showToast("驗證成功！已匯出 CSV 成績表。", "success");
+    }
 
-    // =========================================================================
-    // 9.5 教師密碼驗證（匯出 CSV 與清除所有紀錄）
-    // =========================================================================
-    const TEACHER_SECRET = "chikuwa";
-    let pendingTeacherAction = null; // 'export' | 'clear'
-
-    window.requestTeacherAuth = function (action) {
-      pendingTeacherAction = action;
-      const modal = document.getElementById('teacherAuthModal');
-      const titleEl = document.getElementById('teacherAuthTitle');
-      const descEl = document.getElementById('teacherAuthDesc');
-      const confirmBtn = document.getElementById('teacherAuthConfirmBtn');
-      const inputEl = document.getElementById('teacherPasswordInput');
-      const errorEl = document.getElementById('teacherAuthError');
-
-      inputEl.value = '';
-      errorEl.classList.add('hidden');
-
-      if (action === 'export') {
-        titleEl.textContent = "驗證身分：匯出成績 CSV";
-        descEl.textContent = "請輸入教師密碼以匯出全級學生的練習成績及作答紀錄 CSV 檔案：";
-        confirmBtn.className = "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold shadow transition";
-        confirmBtn.textContent = "驗證並匯出";
-      } else if (action === 'clear') {
-        titleEl.textContent = "驗證身分：清除所有學生紀錄";
-        descEl.innerHTML = '警告：此操作將會<strong class="text-rose-600">永久清除排行榜上所有學生的完成進度與嘗試次數</strong>且無法復原！請輸入教師密碼確認：';
-        confirmBtn.className = "px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-bold shadow transition";
-        confirmBtn.textContent = "驗證並清除";
-      }
-
-      modal.classList.remove('hidden');
-      setTimeout(() => inputEl.focus(), 50);
-    };
-
-    window.closeTeacherAuthModal = function () {
-      document.getElementById('teacherAuthModal').classList.add('hidden');
-      pendingTeacherAction = null;
-    };
-
-    window.verifyTeacherPassword = async function () {
-      const inputVal = document.getElementById('teacherPasswordInput').value;
-      const errorEl = document.getElementById('teacherAuthError');
-
-      if (inputVal !== TEACHER_SECRET) {
-        errorEl.classList.remove('hidden');
-        document.getElementById('teacherPasswordInput').select();
-        showToast("教師密碼錯誤，拒絕操作！", "error");
-        return;
-      }
-
-      const actionToRun = pendingTeacherAction;
-      closeTeacherAuthModal();
-
-      if (actionToRun === 'export') {
-        window.exportLeaderboardCSV();
-      } else if (actionToRun === 'clear') {
-        await clearAllStudentRecords();
-      }
-    };
-
-    async function clearAllStudentRecords() {
+    async function executeClearAllRecords() {
       const keysToDelete = Object.keys(allStudentsLeaderboard);
+      allStudentsLeaderboard = {};
+      studentProgress = {};
+      saveLocalAllRecords();
 
-      // Clear cloud records if enabled
-      if (isCloudEnabled && db && firebaseUser && keysToDelete.length > 0) {
+      if (isCloudEnabled && db && firebaseUser) {
         try {
-          await Promise.all(
-            keysToDelete.map((key) =>
-              deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'student_records', key))
-            )
-          );
+          for (const key of keysToDelete) {
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'student_records', key);
+            await deleteDoc(docRef);
+          }
         } catch (err) {
           console.warn("Cloud delete error:", err);
         }
       }
 
-      // Clear local state & storage
-      allStudentsLeaderboard = {};
-      studentProgress = {};
-      localStorage.removeItem(LOCAL_ALL_RECORDS_KEY);
+      if (currentStudent) {
+        await persistStudentRecord();
+      }
 
       updateStudentStatsUI();
+      updateCurrentProblemBadges();
       renderSidebar();
-      loadProblem(currentProblemIndex);
       renderLeaderboardTable();
-      showToast("已通過密碼驗證，所有學生紀錄已成功清除！", "success");
+      showToast("已清除所有學生練習與排行榜紀錄！", "info");
     }
 
     // =========================================================================
