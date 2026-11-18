@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv/
+venv/
+*.tmp
+# Uncomment the lines below if you do not want to commit live passwords or student scores to GitHub:
+# pw.txt
+# leaderboard.txt
