@@ -106,18 +106,27 @@
 
       <!-- 學生登入與進度統計 -->
       <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-        <div id="studentBar" class="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-xl">
+        <div id="studentBar" class="flex flex-wrap items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-xl">
           <i class="fa-solid fa-user-graduate text-cyan-400 text-sm"></i>
           <select id="classSelect" aria-label="班別" class="bg-slate-900 text-white text-sm rounded-lg px-2 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400">
             <option value="">班別</option>
             <option value="3A">3A</option>
             <option value="3B">3B</option>
             <option value="3C">3C</option>
+            <option value="3D">3D</option>
             <option value="3E">3E</option>
           </select>
           <select id="numberSelect" aria-label="學號" class="bg-slate-900 text-white text-sm rounded-lg px-2 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400">
             <option value="">學號</option>
           </select>
+          <input
+            type="password"
+            id="studentPasswordInput"
+            aria-label="密碼"
+            placeholder="密碼"
+            onkeydown="if(event.key==='Enter') handleStudentLogin()"
+            class="w-20 sm:w-24 bg-slate-900 text-white text-sm rounded-lg px-2.5 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400 placeholder-slate-400"
+          />
           <button id="loginBtn" onclick="handleStudentLogin()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-lg transition shadow">
             登入
           </button>
@@ -156,7 +165,7 @@
   <!-- 登入提醒橫幅 -->
   <div id="loginReminderBanner" class="bg-indigo-600 text-white px-4 py-2 text-center text-xs sm:text-sm flex items-center justify-center gap-2 shadow-inner">
     <i class="fa-solid fa-circle-info"></i>
-    <span>請先於右上角選擇你的<strong>班別</strong>及<strong>學號</strong>並按「<strong>登入</strong>」，系統會自動紀錄你的完成進度、嘗試次數與全級排名！</span>
+    <span>請先於右上角選擇你的<strong>班別</strong>、<strong>學號</strong>及輸入<strong>個人密碼</strong>並按「<strong>登入</strong>」，系統會自動紀錄你的完成進度、嘗試次數與全級排名！</span>
   </div>
 
   <!-- 主工作區（三欄式響應式佈局） -->
@@ -396,6 +405,7 @@
           <button onclick="filterLeaderboard('3A')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3A">3A</button>
           <button onclick="filterLeaderboard('3B')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3B">3B</button>
           <button onclick="filterLeaderboard('3C')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3C">3C</button>
+          <button onclick="filterLeaderboard('3D')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3D">3D</button>
           <button onclick="filterLeaderboard('3E')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3E">3E</button>
         </div>
 
@@ -403,6 +413,16 @@
           <span id="syncStatusBadge" class="text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">
             <i class="fa-solid fa-cloud-check mr-1"></i>Google Sheets 雲端同步
           </span>
+          <button onclick="requestTeacherAuth('export')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white flex items-center gap-1.5 transition shadow-sm">
+            <i class="fa-solid fa-lock text-amber-400 text-[10px]"></i>
+            <i class="fa-solid fa-file-csv"></i>
+            <span>匯出成績 CSV</span>
+          </button>
+          <button onclick="requestTeacherAuth('clear')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white flex items-center gap-1.5 transition shadow-sm">
+            <i class="fa-solid fa-lock text-amber-200 text-[10px]"></i>
+            <i class="fa-solid fa-trash-can"></i>
+            <span>清除紀錄</span>
+          </button>
         </div>
       </div>
 
@@ -491,7 +511,7 @@
     //    每題包含 starterCode（預設框架）、3 層 hints 及 sampleSolution（僅超過 5 次失敗後解鎖）
     // =========================================================================
     const SKIP_THRESHOLD = 5; // 隱藏設定：超過 5 次（第 6 次失敗）自動解鎖答案並標記 Skip
-    const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbwKq5S4xhftug7--yFdwVslMvbxWyx4xe16F6opW_a5lrVBWhlHXUnA17tbl2LBf8mJ/exec";
+    const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycby8si00OO45T8SLpxrOFPlnQFEJyH0jQeXFyC0FGqngtlo1XeNJczCQYvfDCGu3GSeVwA/exec";
 
     const UNITS = [
       // -----------------------------------------------------------------------
@@ -2858,8 +2878,9 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     let leaderboardClassFilter = 'ALL';
     let pendingTeacherAction = null;
 
-    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v3';
-    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v3';
+    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v4';
+    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v4';
+    const VALID_CLASSES = ['3A', '3B', '3C', '3D', '3E'];
 
     function loadLocalAllRecords() {
       try {
@@ -3028,7 +3049,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     }
 
     // =========================================================================
-    // 4. 學生登入與進度 UI 更新
+    // 4. 學生登入（連接 Google Sheets Students 密碼驗證）與進度 UI 更新
     // =========================================================================
     function populateStudentDropdowns() {
       const numSelect = document.getElementById('numberSelect');
@@ -3043,7 +3064,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
         const savedUser = localStorage.getItem(LOCAL_CURRENT_USER_KEY);
         if (savedUser) {
           const parsed = JSON.parse(savedUser);
-          if (parsed.classId && parsed.number && ['3A', '3B', '3C', '3E'].includes(parsed.classId)) {
+          if (parsed.classId && parsed.number && parsed.verified && VALID_CLASSES.includes(parsed.classId)) {
             document.getElementById('classSelect').value = parsed.classId;
             document.getElementById('numberSelect').value = parsed.number;
             applyStudentSession(parsed.classId, parseInt(parsed.number, 10), false);
@@ -3052,20 +3073,68 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
       } catch (e) {}
     }
 
-    window.handleStudentLogin = function () {
+    window.handleStudentLogin = async function () {
       const classId = document.getElementById('classSelect').value;
       const numVal = document.getElementById('numberSelect').value;
+      const pwdInput = document.getElementById('studentPasswordInput');
+      const password = pwdInput.value.trim();
+
       if (!classId || !numVal) {
         showToast("請先選擇你的「班別」及「學號」！", "warning");
         return;
       }
-      applyStudentSession(classId, parseInt(numVal, 10), true);
+      if (!password) {
+        showToast("請輸入你的個人登入密碼！", "warning");
+        pwdInput.focus();
+        return;
+      }
+
+      const number = parseInt(numVal, 10);
+      const paddedNum = String(number).padStart(2, '0');
+      const studentKey = `${classId}-${paddedNum}`;
+
+      const loginBtn = document.getElementById('loginBtn');
+      const origBtnText = loginBtn.textContent;
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+
+      try {
+        const res = await fetch(GOOGLE_SHEETS_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "login",
+            studentKey: studentKey,
+            password: password
+          })
+        });
+        const data = await res.json();
+
+        if (data && data.status === 'ok') {
+          pwdInput.value = '';
+          applyStudentSession(classId, number, true);
+        } else if (data && data.status === 'wrong_password') {
+          showToast("登入密碼錯誤，請檢查後重新輸入！", "error");
+          pwdInput.select();
+          pwdInput.focus();
+        } else if (data && data.status === 'not_found') {
+          showToast(`Google Sheets 找不到 ${studentKey} 的帳號紀錄，請聯絡老師。`, "error");
+        } else {
+          showToast("驗證失敗：" + (data.message || "請稍後再試"), "error");
+        }
+      } catch (err) {
+        console.error("Login fetch error:", err);
+        showToast("無法連接 Google Sheets 驗證伺服器，請檢查網絡連線！", "error");
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = currentStudent ? '切換' : origBtnText;
+      }
     };
 
     async function applyStudentSession(classId, number, notify) {
       const paddedNum = String(number).padStart(2, '0');
       const key = `${classId}-${paddedNum}`;
-      currentStudent = { classId, number, key };
+      currentStudent = { classId, number, key, verified: true };
 
       localStorage.setItem(LOCAL_CURRENT_USER_KEY, JSON.stringify(currentStudent));
 
@@ -3088,7 +3157,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
       loadProblem(currentProblemIndex);
 
       if (notify) {
-        showToast(`歡迎 ${classId} 班 ${number} 號同學！進度已連結至雲端。`, "success");
+        showToast(`驗證成功！歡迎 ${classId} 班 ${number} 號同學。`, "success");
         await syncFromGoogleSheets(true);
         loadProblem(currentProblemIndex);
       }
@@ -3610,7 +3679,7 @@ finally:
 
     window.runAndGradeCode = async function () {
       if (!currentStudent) {
-        showToast("請先於右上角選擇「班別」及「學號」並登入！", "warning");
+        showToast("請先於右上角選擇「班別」、「學號」並輸入密碼登入！", "warning");
         document.getElementById('classSelect').focus();
         return;
       }
@@ -3684,7 +3753,6 @@ finally:
 
       if (allPassed) {
         if (rec.skipped) {
-          // 若已標記為 Skip，通過後仍維持 Skip，不計算為完成
           summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300";
           summaryPill.innerHTML = `<i class="fa-solid fa-forward mr-1"></i>已通過測試（狀態維持 Skip）`;
           showToast("程式輸出正確！此題已標記為 Skip，不計入已完成題數。", "info");
@@ -3695,7 +3763,6 @@ finally:
           showToast(`恭喜通過「${prob.title}」！進度已同步至雲端排行榜。`, "success");
         }
       } else {
-        // 背景靜默判斷：若尚未通過且嘗試次數超過 5 次（attempts > 5），自動標記 Skip 並顯示參考答案
         if (!rec.solved && !rec.skipped && rec.attempts > SKIP_THRESHOLD) {
           rec.skipped = true;
           summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300";
@@ -3756,7 +3823,6 @@ finally:
       if (leaderboardClassFilter !== 'ALL') {
         list = list.filter(item => item.classId === leaderboardClassFilter);
       }
-      // 排序：1. 已完成題數由高至低；2. 總嘗試次數由少至多；3. 班別；4. 學號
       list.sort((a, b) => {
         if (b.solvedCount !== a.solvedCount) return b.solvedCount - a.solvedCount;
         if (a.totalAttempts !== b.totalAttempts) return a.totalAttempts - b.totalAttempts;
@@ -3825,7 +3891,6 @@ finally:
       }).join('');
     }
 
-    // 教師密碼驗證流程
     window.requestTeacherAuth = function (actionType) {
       pendingTeacherAction = actionType;
       const titleEl = document.getElementById('teacherModalTitle');
