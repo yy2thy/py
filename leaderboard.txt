@@ -1,4 +1,0 @@
-{
-  "students": {},
-  "updated_at": ""
-}
