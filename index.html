@@ -2852,7 +2852,8 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     );
 
     // =========================================================================
-    // 2. 全域狀態、本地快取與 Google Sheets 雙向雲端同步
+    // =========================================================================
+    // 2. 全域狀態、本地快取與 Google Sheets 雙向雲端同步（已修正分數計算與進度被覆蓋問題）
     // =========================================================================
     let currentProblemIndex = 0;
     let currentFilter = 'all';
@@ -2861,23 +2862,93 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     let pyodideReady = false;
 
     let currentStudent = null; // { classId: '3A', number: 1, key: '3A-01' }
-    // Map of problemId -> { solved: boolean, skipped: boolean, attempts: number, code: string }
     let studentProgress = {};
-    // Map of studentKey -> { studentKey, classId, number, solvedCount, skippedCount, totalAttempts, problems, updatedAt }
     let allStudentsLeaderboard = {};
     let leaderboardClassFilter = 'ALL';
     let pendingTeacherAction = null;
+    let isPushingToCloud = false; // 防止上傳期間被舊雲端資料覆蓋
 
-    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v4';
-    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v4';
+    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v5';
+    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v5';
     const VALID_CLASSES = ['3A', '3B', '3C', '3D', '3E'];
 
+    // 標準化 studentKey（例如將 "3A-1" 或 " 3a-01 " 統一轉為 "3A-01"）
+    function normalizeStudentKey(classId, number) {
+      const cls = String(classId || '').trim().toUpperCase();
+      const num = parseInt(number, 10);
+      if (!VALID_CLASSES.includes(cls) || isNaN(num) || num < 1 || num > 40) return null;
+      return `${cls}-${String(num).padStart(2, '0')}`;
+    }
+
+    // 清理舊版本殘留的 localStorage 暫存
+    function clearLegacyStorage() {
+      const legacyKeys = [
+        'yy2_s3_python_all_students_v1',
+        'yy2_s3_python_all_students_v2',
+        'yy2_s3_python_all_students_v3',
+        'yy2_s3_python_all_students_v4',
+        'yy2_s3_python_current_student_v1',
+        'yy2_s3_python_current_student_v2',
+        'yy2_s3_python_current_student_v3',
+        'yy2_s3_python_current_student_v4'
+      ];
+      legacyKeys.forEach(k => localStorage.removeItem(k));
+    }
+
+    // 根據 problems 物件重新精確計算完成題數、Skip 題數與總嘗試次數
+    function recalculateRecordMetrics(record) {
+      let solvedCount = 0;
+      let skippedCount = 0;
+      let totalAttempts = 0;
+      const problemsObj = record.problems || {};
+
+      ALL_PROBLEMS.forEach((p) => {
+        const rec = problemsObj[p.id];
+        if (rec) {
+          const isSkipped = Boolean(rec.skipped);
+          const isSolved = !isSkipped && Boolean(rec.solved);
+          rec.skipped = isSkipped;
+          rec.solved = isSolved;
+          rec.attempts = Number(rec.attempts) || 0;
+          if (isSolved) solvedCount++;
+          if (isSkipped) skippedCount++;
+          totalAttempts += rec.attempts;
+        }
+      });
+
+      record.solvedCount = solvedCount;
+      record.skippedCount = skippedCount;
+      record.totalAttempts = totalAttempts;
+      return record;
+    }
+
     function loadLocalAllRecords() {
+      clearLegacyStorage();
       try {
         const raw = localStorage.getItem(LOCAL_ALL_RECORDS_KEY);
-        if (raw) {
-          allStudentsLeaderboard = JSON.parse(raw);
+        if (!raw) {
+          allStudentsLeaderboard = {};
+          return;
         }
+        const parsed = JSON.parse(raw);
+        const cleaned = {};
+        Object.values(parsed).forEach((rec) => {
+          const normKey = normalizeStudentKey(rec.classId, rec.number);
+          if (normKey) {
+            rec.studentKey = normKey;
+            rec.classId = normKey.split('-')[0];
+            rec.number = parseInt(rec.number, 10);
+            if (typeof rec.problems === 'string') {
+              try { rec.problems = JSON.parse(rec.problems); } catch (e) { rec.problems = {}; }
+            }
+            recalculateRecordMetrics(rec);
+            if (!cleaned[normKey] || (rec.updatedAt || 0) >= (cleaned[normKey].updatedAt || 0)) {
+              cleaned[normKey] = rec;
+            }
+          }
+        });
+        allStudentsLeaderboard = cleaned;
+        saveLocalAllRecords();
       } catch (e) {
         allStudentsLeaderboard = {};
       }
@@ -2891,42 +2962,66 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
       }
     }
 
-    // 從 Google Sheets 拉取全級最新成績與作答記錄
+    // 從 Google Sheets 拉取全級最新成績，並比對 updatedAt 時間戳避免覆蓋較新的本地成績
     async function syncFromGoogleSheets(silent = true) {
-      if (!GOOGLE_SHEETS_API_URL) return;
+      if (!GOOGLE_SHEETS_API_URL || isPushingToCloud) return;
       const badge = document.getElementById('syncStatusBadge');
       try {
         if (badge) {
           badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-medium";
           badge.innerHTML = '<i class="fa-solid fa-rotate fa-spin mr-1"></i>正在同步雲端資料...';
         }
-        const res = await fetch(GOOGLE_SHEETS_API_URL + "?t=" + Date.now());
+        const res = await fetch(GOOGLE_SHEETS_API_URL + "?t=" + Date.now(), { cache: "no-store" });
         const data = await res.json();
+
         if (data && data.status === 'ok' && data.records) {
-          Object.keys(data.records).forEach((key) => {
-            const remoteRec = data.records[key];
-            const localRec = allStudentsLeaderboard[key];
-            if (!localRec || remoteRec.updatedAt >= (localRec.updatedAt || 0)) {
-              allStudentsLeaderboard[key] = remoteRec;
+          const freshRecords = {};
+
+          Object.values(data.records).forEach((remoteRec) => {
+            const normKey = normalizeStudentKey(remoteRec.classId, remoteRec.number);
+            if (!normKey) return;
+
+            remoteRec.studentKey = normKey;
+            remoteRec.classId = normKey.split('-')[0];
+            remoteRec.number = parseInt(remoteRec.number, 10);
+            if (typeof remoteRec.problems === 'string') {
+              try { remoteRec.problems = JSON.parse(remoteRec.problems); } catch (e) { remoteRec.problems = {}; }
+            }
+            recalculateRecordMetrics(remoteRec);
+
+            if (!freshRecords[normKey] || (remoteRec.updatedAt || 0) >= (freshRecords[normKey].updatedAt || 0)) {
+              freshRecords[normKey] = remoteRec;
             }
           });
+
+          // 保留本地比雲端更新的紀錄（例如剛按完批改、雲端尚未寫入完成的瞬間）
+          Object.keys(allStudentsLeaderboard).forEach((localKey) => {
+            const localRec = allStudentsLeaderboard[localKey];
+            const remoteRec = freshRecords[localKey];
+            if (localRec && (!remoteRec || (localRec.updatedAt || 0) > (remoteRec.updatedAt || 0))) {
+              freshRecords[localKey] = localRec;
+            }
+          });
+
+          allStudentsLeaderboard = freshRecords;
           saveLocalAllRecords();
-          localStorage.removeItem(LOCAL_ALL_RECORDS_KEY);
-          // 若當前學生已登入，同步更新其個人進度與編輯器草稿
+
+          // 若當前學生已登入，僅在雲端資料較新或本地尚無進度時才同步更新 studentProgress
           if (currentStudent && allStudentsLeaderboard[currentStudent.key]) {
-            const myRemote = allStudentsLeaderboard[currentStudent.key];
-            if (myRemote.problems) {
-              studentProgress = JSON.parse(JSON.stringify(myRemote.problems));
-              updateStudentStatsUI();
-              renderSidebar();
-              updateCurrentProblemBadges();
-              const curProb = ALL_PROBLEMS[currentProblemIndex];
-              if (studentProgress[curProb.id] && studentProgress[curProb.id].code) {
-                const editor = document.getElementById('codeEditor');
-                if (editor.value.trim() === curProb.starterCode.trim()) {
-                  editor.value = studentProgress[curProb.id].code;
-                  updateLineNumbers();
-                }
+            const latestRec = allStudentsLeaderboard[currentStudent.key];
+            if (latestRec.problems) {
+              studentProgress = JSON.parse(JSON.stringify(latestRec.problems));
+            }
+            updateStudentStatsUI();
+            renderSidebar();
+            updateCurrentProblemBadges();
+
+            const curProb = ALL_PROBLEMS[currentProblemIndex];
+            if (studentProgress[curProb.id] && studentProgress[curProb.id].code) {
+              const editor = document.getElementById('codeEditor');
+              if (editor.value.trim() === curProb.starterCode.trim()) {
+                editor.value = studentProgress[curProb.id].code;
+                updateLineNumbers();
               }
             }
           }
@@ -2935,6 +3030,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
             renderLeaderboardTable();
           }
         }
+
         if (badge) {
           badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium";
           badge.innerHTML = '<i class="fa-solid fa-cloud-check mr-1"></i>Google Sheets 已同步';
@@ -2953,6 +3049,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     async function pushRecordToGoogleSheets(record) {
       if (!GOOGLE_SHEETS_API_URL || !record) return;
       const badge = document.getElementById('syncStatusBadge');
+      isPushingToCloud = true;
       try {
         if (badge) {
           badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-medium";
@@ -2973,6 +3070,8 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
           badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 font-medium";
           badge.innerHTML = '<i class="fa-solid fa-database mr-1"></i>已存於本機（待同步）';
         }
+      } finally {
+        isPushingToCloud = false;
       }
     }
 
@@ -2986,15 +3085,18 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
 
       ALL_PROBLEMS.forEach((p) => {
         const rec = studentProgress[p.id] || { solved: false, skipped: false, attempts: 0, code: '' };
-        const isSkipped = !!rec.skipped;
-        const isSolved = !isSkipped && !!rec.solved; // Skip 題目絕不計入完成
+        const isSkipped = Boolean(rec.skipped);
+        const isSolved = !isSkipped && Boolean(rec.solved);
+        const attemptsNum = Number(rec.attempts) || 0;
+
         if (isSolved) solvedCount++;
         if (isSkipped) skippedCount++;
-        totalAttempts += (rec.attempts || 0);
+        totalAttempts += attemptsNum;
+
         problemsSummary[p.id] = {
           solved: isSolved,
           skipped: isSkipped,
-          attempts: rec.attempts || 0,
+          attempts: attemptsNum,
           code: rec.code || ''
         };
       });
@@ -3160,8 +3262,8 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
       ALL_PROBLEMS.forEach((p) => {
         const rec = studentProgress[p.id];
         if (rec) {
-          if (rec.solved && !rec.skipped) solved++;
-          attempts += (rec.attempts || 0);
+          if (Boolean(rec.solved) && !Boolean(rec.skipped)) solved++;
+          attempts += (Number(rec.attempts) || 0);
         }
       });
       const rate = Math.round((solved / ALL_PROBLEMS.length) * 100);
