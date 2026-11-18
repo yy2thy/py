@@ -2852,7 +2852,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     );
 
     // =========================================================================
-    // 2. 全域狀態、本地快取與 Google Sheets 雙向雲端同步
+    // 2. 全域狀態、本地快取與 Google Sheets 雙向雲端同步（已修正暫存重複與覆蓋問題）
     // =========================================================================
     let currentProblemIndex = 0;
     let currentFilter = 'all';
@@ -2867,17 +2867,105 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     let allStudentsLeaderboard = {};
     let leaderboardClassFilter = 'ALL';
     let pendingTeacherAction = null;
+    let isPushingToCloud = false;
 
-    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v4';
-    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v4';
+    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v5';
+    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v5';
     const VALID_CLASSES = ['3A', '3B', '3C', '3D', '3E'];
 
+    // 統一標準化 studentKey（例如 "3A-1" 統一轉為 "3A-01"）
+    function normalizeStudentKey(classId, number) {
+      const cls = String(classId || '').trim().toUpperCase();
+      const num = parseInt(number, 10);
+      if (!VALID_CLASSES.includes(cls) || isNaN(num) || num < 1 || num > 40) return null;
+      return `${cls}-${String(num).padStart(2, '0')}`;
+    }
+
+    // 清除舊版本的 localStorage 與 cookies 暫存，避免舊快取與 Google Sheets 資料重複
+    function clearLegacyStorageAndCookies() {
+      ['v1', 'v2', 'v3', 'v4'].forEach((v) => {
+        localStorage.removeItem(`yy2_s3_python_all_students_${v}`);
+        localStorage.removeItem(`yy2_s3_python_current_student_${v}`);
+      });
+      // 清除所有同網域下的舊 cookies 暫存
+      if (typeof document !== 'undefined' && document.cookie) {
+        document.cookie.split(';').forEach((c) => {
+          const eqPos = c.indexOf('=');
+          const name = eqPos > -1 ? c.substr(0, eqPos).trim() : c.trim();
+          if (name) {
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+          }
+        });
+      }
+    }
+
+    // 標準化單筆學生紀錄物件，確保欄位格式統一並重新計算完成題數
+    function normalizeRecordObject(rec) {
+      if (!rec) return null;
+      const normKey = normalizeStudentKey(rec.classId, rec.number);
+      if (!normKey) return null;
+
+      let probs = rec.problems || {};
+      if (typeof probs === 'string') {
+        try { probs = JSON.parse(probs); } catch (e) { probs = {}; }
+      }
+
+      let solvedCount = 0;
+      let skippedCount = 0;
+      let totalAttempts = 0;
+      const cleanProblems = {};
+
+      ALL_PROBLEMS.forEach((p) => {
+        const item = probs[p.id];
+        if (item) {
+          const isSkipped = Boolean(item.skipped);
+          const isSolved = !isSkipped && Boolean(item.solved);
+          const attempts = Number(item.attempts) || 0;
+          if (isSolved) solvedCount++;
+          if (isSkipped) skippedCount++;
+          totalAttempts += attempts;
+          cleanProblems[p.id] = {
+            solved: isSolved,
+            skipped: isSkipped,
+            attempts: attempts,
+            code: item.code || ''
+          };
+        }
+      });
+
+      const hasDetailedProblems = Object.keys(cleanProblems).length > 0;
+      return {
+        studentKey: normKey,
+        classId: normKey.split('-')[0],
+        number: parseInt(rec.number, 10),
+        solvedCount: hasDetailedProblems ? solvedCount : (Number(rec.solvedCount) || 0),
+        skippedCount: hasDetailedProblems ? skippedCount : (Number(rec.skippedCount) || 0),
+        totalAttempts: hasDetailedProblems ? totalAttempts : (Number(rec.totalAttempts) || 0),
+        problems: cleanProblems,
+        updatedAt: Number(rec.updatedAt) || 0
+      };
+    }
+
     function loadLocalAllRecords() {
+      clearLegacyStorageAndCookies();
       try {
         const raw = localStorage.getItem(LOCAL_ALL_RECORDS_KEY);
-        if (raw) {
-          allStudentsLeaderboard = JSON.parse(raw);
+        if (!raw) {
+          allStudentsLeaderboard = {};
+          return;
         }
+        const parsed = JSON.parse(raw);
+        const cleaned = {};
+        Object.values(parsed).forEach((rec) => {
+          const normRec = normalizeRecordObject(rec);
+          if (normRec) {
+            if (!cleaned[normRec.studentKey] || normRec.updatedAt >= cleaned[normRec.studentKey].updatedAt) {
+              cleaned[normRec.studentKey] = normRec;
+            }
+          }
+        });
+        allStudentsLeaderboard = cleaned;
+        saveLocalAllRecords();
       } catch (e) {
         allStudentsLeaderboard = {};
       }
@@ -2891,25 +2979,41 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
       }
     }
 
-    // 從 Google Sheets 拉取全級最新成績與作答記錄
+    // 從 Google Sheets 拉取全級最新成績與作答記錄，並以去重後的雲端資料完全取代舊快取
     async function syncFromGoogleSheets(silent = true) {
-      if (!GOOGLE_SHEETS_API_URL) return;
+      if (!GOOGLE_SHEETS_API_URL || isPushingToCloud) return;
       const badge = document.getElementById('syncStatusBadge');
       try {
         if (badge) {
           badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-medium";
           badge.innerHTML = '<i class="fa-solid fa-rotate fa-spin mr-1"></i>正在同步雲端資料...';
         }
-        const res = await fetch(GOOGLE_SHEETS_API_URL + "?t=" + Date.now());
+        const res = await fetch(GOOGLE_SHEETS_API_URL + "?t=" + Date.now(), { cache: "no-store" });
         const data = await res.json();
         if (data && data.status === 'ok' && data.records) {
-          Object.keys(data.records).forEach((key) => {
-            const remoteRec = data.records[key];
-            const localRec = allStudentsLeaderboard[key];
-            if (!localRec || remoteRec.updatedAt >= (localRec.updatedAt || 0)) {
-              allStudentsLeaderboard[key] = remoteRec;
+          const freshRecords = {};
+
+          // 1. 解析並標準化所有 Google Sheets 雲端紀錄（依標準化 studentKey 去重）
+          Object.values(data.records).forEach((remoteRaw) => {
+            const normRec = normalizeRecordObject(remoteRaw);
+            if (!normRec) return;
+            if (!freshRecords[normRec.studentKey] || normRec.updatedAt >= freshRecords[normRec.studentKey].updatedAt) {
+              freshRecords[normRec.studentKey] = normRec;
             }
           });
+
+          // 2. 僅保留本地確實剛提交且尚未寫入雲端的新紀錄，避免舊本地快取殘留重複
+          Object.keys(allStudentsLeaderboard).forEach((k) => {
+            const localRec = normalizeRecordObject(allStudentsLeaderboard[k]);
+            if (!localRec) return;
+            const remoteRec = freshRecords[localRec.studentKey];
+            if (localRec.totalAttempts > 0 && (!remoteRec || localRec.updatedAt > remoteRec.updatedAt)) {
+              freshRecords[localRec.studentKey] = localRec;
+            }
+          });
+
+          // 3. 完全取代舊快取並寫回 localStorage，杜絕重複顯示
+          allStudentsLeaderboard = freshRecords;
           saveLocalAllRecords();
 
           // 若當前學生已登入，同步更新其個人進度與編輯器草稿
@@ -2953,6 +3057,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     async function pushRecordToGoogleSheets(record) {
       if (!GOOGLE_SHEETS_API_URL || !record) return;
       const badge = document.getElementById('syncStatusBadge');
+      isPushingToCloud = true;
       try {
         if (badge) {
           badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-medium";
@@ -2973,6 +3078,8 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
           badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 font-medium";
           badge.innerHTML = '<i class="fa-solid fa-database mr-1"></i>已存於本機（待同步）';
         }
+      } finally {
+        isPushingToCloud = false;
       }
     }
 
@@ -3132,8 +3239,6 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
       studentProgress = {};
       if (existing && existing.problems) {
         studentProgress = JSON.parse(JSON.stringify(existing.problems));
-      } else {
-        persistStudentRecord();
       }
 
       document.getElementById('loginReminderBanner').classList.add('hidden');
@@ -3148,9 +3253,19 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
 
       if (notify) {
         showToast(`驗證成功！歡迎 ${classId} 班 ${number} 號同學。`, "success");
-        await syncFromGoogleSheets(true);
-        loadProblem(currentProblemIndex);
       }
+
+      // 先向 Google Sheets 同步最新雲端資料，確認沒有雲端紀錄才建立初始空白紀錄
+      await syncFromGoogleSheets(true);
+      if (allStudentsLeaderboard[key] && allStudentsLeaderboard[key].problems) {
+        studentProgress = JSON.parse(JSON.stringify(allStudentsLeaderboard[key].problems));
+      } else if (!allStudentsLeaderboard[key]) {
+        persistStudentRecord();
+      }
+
+      updateStudentStatsUI();
+      renderSidebar();
+      loadProblem(currentProblemIndex);
     }
 
     function updateStudentStatsUI() {
@@ -3809,7 +3924,18 @@ finally:
     };
 
     function getSortedLeaderboardList() {
-      let list = Object.values(allStudentsLeaderboard);
+      // 雙重去重保護：依據標準化後的 studentKey（如 3A-01）保留最新一筆，確保排行榜絕無重複學生
+      const dedupMap = new Map();
+      Object.values(allStudentsLeaderboard).forEach((item) => {
+        const normRec = normalizeRecordObject(item);
+        if (!normRec) return;
+        const existing = dedupMap.get(normRec.studentKey);
+        if (!existing || normRec.updatedAt >= existing.updatedAt) {
+          dedupMap.set(normRec.studentKey, normRec);
+        }
+      });
+
+      let list = Array.from(dedupMap.values());
       if (leaderboardClassFilter !== 'ALL') {
         list = list.filter(item => item.classId === leaderboardClassFilter);
       }
@@ -3970,6 +4096,7 @@ finally:
       allStudentsLeaderboard = {};
       studentProgress = {};
       localStorage.removeItem(LOCAL_ALL_RECORDS_KEY);
+      clearLegacyStorageAndCookies();
 
       if (GOOGLE_SHEETS_API_URL) {
         try {
