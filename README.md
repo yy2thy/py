@@ -7,7 +7,7 @@
 ```text
 ├── app.py              # Python Flask 後端伺服器（支援 SSE 即時推播排行榜、讀取 pw.txt、讀寫 leaderboard.txt）
 ├── index.html          # 前端互動式程式編寫平台（Pyodide Python 3 自動批改、69 題題庫、即時排行榜）
-├── pw.txt              # 後端教師密碼設定檔（預設密碼：chikuwa，可自行修改）
+├── pw.txt              # 後端教師密碼設定檔（預設密碼：，可自行修改）
 ├── leaderboard.txt     # 全級學生進度與排行榜資料儲存檔
 ├── requirements.txt    # Python 依賴套件清單
 ├── .gitignore          # Git 忽略規則
@@ -22,7 +22,7 @@
    ```
 
 2. **設定教師密碼**：
-   開啟 `pw.txt` 並輸入自訂的教師密碼（預設為 `chikuwa`）。教師密碼僅保存於後端 `pw.txt`，不會暴露在前端網頁原始碼中。
+   開啟 `pw.txt` 並輸入自訂的教師密碼（預設為 ``）。教師密碼僅保存於後端 `pw.txt`，不會暴露在前端網頁原始碼中。
 
 3. **啟動伺服器**：
    ```bash
