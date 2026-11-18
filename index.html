@@ -2911,7 +2911,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
             }
           });
           saveLocalAllRecords();
-
+          localStorage.removeItem(LOCAL_ALL_RECORDS_KEY);
           // 若當前學生已登入，同步更新其個人進度與編輯器草稿
           if (currentStudent && allStudentsLeaderboard[currentStudent.key]) {
             const myRemote = allStudentsLeaderboard[currentStudent.key];
