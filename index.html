@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> 中三 Python 互動式程式編寫與自動批改平台</title>
+  <title>中三 Python 互動式程式編寫與自動批改平台</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -83,7 +83,7 @@
   <!-- 頂部導覽列 -->
   <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30 border-b border-slate-800">
     <div class="max-w-[1600px] mx-auto px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-3">
-      <!-- 校名與平台標題 -->
+      <!-- 平台標題與狀態 -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center shadow-lg shrink-0">
           <i class="fa-brands fa-python text-2xl text-white"></i>
@@ -91,7 +91,7 @@
         <div>
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
-              
+              <i class="fa-solid fa-cloud mr-1"></i>雲端同步版
             </span>
             <span id="pyodideStatusBadge" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center gap-1.5">
               <i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i>
@@ -104,34 +104,34 @@
         </div>
       </div>
 
-      <!-- 學生登入與進度統計 -->
+      <!-- 學生登入（班別 + 學號 + 密碼）與進度統計 -->
       <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-        <div id="studentBar" class="flex flex-wrap items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-xl">
+        <form id="studentBar" onsubmit="handleStudentLogin(event)" class="flex items-center gap-1.5 sm:gap-2 bg-slate-800/90 border border-slate-700 px-2.5 py-1.5 rounded-xl">
           <i class="fa-solid fa-user-graduate text-cyan-400 text-sm"></i>
-          <select id="classSelect" aria-label="班別" class="bg-slate-900 text-white text-sm rounded-lg px-2 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400">
+          <select id="classSelect" aria-label="班別" class="bg-slate-900 text-white text-xs sm:text-sm rounded-lg px-2 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400">
             <option value="">班別</option>
             <option value="3A">3A</option>
             <option value="3B">3B</option>
             <option value="3C">3C</option>
             <option value="3E">3E</option>
           </select>
-          <select id="numberSelect" aria-label="學號" class="bg-slate-900 text-white text-sm rounded-lg px-2 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400">
+          <select id="numberSelect" aria-label="學號" class="bg-slate-900 text-white text-xs sm:text-sm rounded-lg px-2 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400">
             <option value="">學號</option>
           </select>
           <input
             type="password"
             id="studentPasswordInput"
-            aria-label="密碼"
+            aria-label="學生密碼"
             placeholder="密碼"
-            onkeydown="if(event.key==='Enter') handleStudentLogin()"
-            class="w-20 sm:w-24 bg-slate-900 text-white text-sm rounded-lg px-2.5 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400 placeholder-slate-400"
+            autocomplete="off"
+            class="w-20 sm:w-24 bg-slate-900 text-white text-xs sm:text-sm rounded-lg px-2.5 py-1 border border-slate-600 focus:outline-none focus:border-cyan-400"
           />
-          <button id="loginBtn" onclick="handleStudentLogin()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-lg transition shadow">
-            登入
+          <button type="submit" id="loginBtn" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs sm:text-sm font-semibold px-3 py-1 rounded-lg transition shadow flex items-center gap-1">
+            <span>登入</span>
           </button>
-        </div>
+        </form>
 
-        <!-- 學生個人進度數據（絕不顯示嘗試上限數字） -->
+        <!-- 學生個人進度數據 -->
         <div id="studentStatsBox" class="hidden items-center gap-2 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-xl text-xs sm:text-sm">
           <div class="flex items-center gap-1.5 pr-2 border-r border-slate-700">
             <span class="text-slate-400">完成：</span>
@@ -164,7 +164,7 @@
   <!-- 登入提醒橫幅 -->
   <div id="loginReminderBanner" class="bg-indigo-600 text-white px-4 py-2 text-center text-xs sm:text-sm flex items-center justify-center gap-2 shadow-inner">
     <i class="fa-solid fa-circle-info"></i>
-    <span>請先於右上角選擇你的<strong>班別</strong>、<strong>學號</strong>及輸入<strong>個人密碼</strong>並按「<strong>登入</strong>」，系統會自動紀錄你的完成進度、嘗試次數與全級排名！</span>
+    <span>請先於右上角選擇你的<strong>班別</strong>、<strong>學號</strong>並輸入<strong>個人密碼</strong>後按「<strong>登入</strong>」，系統會從雲端載入你的完成進度並即時更新全級排名！</span>
   </div>
 
   <!-- 主工作區（三欄式響應式佈局） -->
@@ -225,7 +225,7 @@
 
       <!-- 題目可捲動內容區 -->
       <div class="flex-1 overflow-y-auto p-4 space-y-5">
-        <!-- 隱藏式參考答案卡片：平時完全隱藏（hidden），僅在學生該題嘗試超過 5 次後才靜默顯示 -->
+        <!-- 隱藏式參考答案卡片：前端無任何預設答案，僅當後端確認嘗試 > 5 次並回傳解答後才動態顯示 -->
         <div id="revealedAnswerCard" class="hidden rounded-xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 p-3.5 shadow-sm space-y-2.5">
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
@@ -242,7 +242,7 @@
             </button>
           </div>
           <p class="text-xs text-orange-800 leading-relaxed">
-            系統已為你解鎖本題的標準參考寫法供學習對照。由於本題已標記為 <strong>Skip</strong>，即使套用並執行通過，亦不會計入已完成題數。
+            系統已從雲端為你解鎖本題的標準參考寫法供學習對照。由於本題已標記為 <strong>Skip</strong>，即使套用並執行通過，亦不會計入已完成題數。
           </p>
           <pre id="revealedAnswerCode" class="font-mono-code text-xs bg-slate-900 text-emerald-300 p-3 rounded-lg border border-slate-800 overflow-x-auto leading-relaxed"></pre>
         </div>
@@ -279,7 +279,7 @@
           </div>
         </div>
 
-        <!-- 循序漸進思考提示區（無任何嘗試上限預告文字） -->
+        <!-- 循序漸進思考提示區 -->
         <div class="border-t border-slate-100 pt-4">
           <div class="flex items-center justify-between mb-2.5">
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
@@ -396,7 +396,7 @@
         </button>
       </div>
 
-      <!-- 班別篩選與教師管理操作列 -->
+      <!-- 班別篩選與雲端同步操作列 -->
       <div class="px-5 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-1.5">
           <span class="text-xs font-semibold text-slate-500 mr-1">篩選班別：</span>
@@ -404,15 +404,17 @@
           <button onclick="filterLeaderboard('3A')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3A">3A</button>
           <button onclick="filterLeaderboard('3B')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3B">3B</button>
           <button onclick="filterLeaderboard('3C')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3C">3C</button>
-          <button onclick="filterLeaderboard('3D')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3D">3D</button>
           <button onclick="filterLeaderboard('3E')" class="lb-filter-btn px-3 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100" data-class="3E">3E</button>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <span id="syncStatusBadge" class="text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">
-            <i class="fa-solid fa-cloud-check mr-1"></i>Google Sheets 雲端同步
+          <span class="text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">
+            <i class="fa-solid fa-cloud-arrow-down mr-1"></i>Google Sheets 雲端同步
           </span>
-
+          <button onclick="refreshLeaderboardFromCloud(true)" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 transition shadow-sm">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>重新整理</span>
+          </button>
         </div>
       </div>
 
@@ -445,68 +447,47 @@
     </div>
   </div>
 
-  <!-- 教師密碼驗證視窗（保護匯出 CSV 與清除紀錄功能） -->
-  <div id="teacherPasswordModal" class="fixed inset-0 z-[60] hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
-      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400">
-            <i class="fa-solid fa-key"></i>
-          </div>
-          <h3 id="teacherModalTitle" class="font-bold text-base">教師權限驗證</h3>
-        </div>
-        <button onclick="closeTeacherModal()" class="text-slate-400 hover:text-white transition">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <form onsubmit="submitTeacherPassword(event)" class="p-5 space-y-4">
-        <p id="teacherModalDesc" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          請輸入教師密碼以執行管理操作：
-        </p>
-
-        <div>
-          <label for="teacherPasswordInput" class="block text-xs font-bold text-slate-700 mb-1.5">教師密碼</label>
-          <input
-            type="password"
-            id="teacherPasswordInput"
-            autocomplete="off"
-            placeholder="請輸入密碼..."
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          />
-          <p id="teacherPasswordError" class="hidden text-xs font-semibold text-rose-600 mt-1.5 flex items-center gap-1">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <span>密碼錯誤，請重新輸入！</span>
-          </p>
-        </div>
-
-        <div class="flex items-center justify-end gap-2 pt-2">
-          <button type="button" onclick="closeTeacherModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition">
-            取消
-          </button>
-          <button type="submit" id="teacherConfirmBtn" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold shadow transition">
-            確認執行
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- Toast 提示通知容器 -->
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
   <script>
     // =========================================================================
-    // 1. 完整 69 題題庫定義（9 大單元：8 個核心單元 × 8 題變式 + 5 題綜合挑戰題）
-    //    每題包含 starterCode（預設框架）、3 層 hints 及 sampleSolution（僅超過 5 次失敗後解鎖）
+    // 1. 安全後端 API 連線設定（不包含任何試算表 ID 或工作表名稱，且前端零明文答案）
     // =========================================================================
-    const SKIP_THRESHOLD = 5; // 隱藏設定：超過 5 次（第 6 次失敗）自動解鎖答案並標記 Skip
-    const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycby8si00OO45T8SLpxrOFPlnQFEJyH0jQeXFyC0FGqngtlo1XeNJczCQYvfDCGu3GSeVwA/exec";
+    const API_ENDPOINT = "https://script.google.com/macros/s/AKfycbxPpPsSUeR4UsLndYxR4rZ0RSZgMEYQ4iq2UB2_pm_WOBoS8JlV1z-A3o1oBtT4y7Mk/exec";
 
+    // 清除任何舊版暫存 localStorage 與 Cookies，確保資料完全以雲端為準且不重複顯示
+    function purgeLegacyBrowserCache() {
+      try {
+        localStorage.removeItem('yy2_s3_python_all_students_v3');
+        localStorage.removeItem('yy2_s3_python_current_student_v3');
+        sessionStorage.clear();
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c
+            .replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
+        });
+      } catch (e) {}
+    }
+
+    async function callBackendAPI(payload) {
+      const response = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP 狀態錯誤 (${response.status})`);
+      }
+      return await response.json();
+    }
+
+    // =========================================================================
+    // 2. 完整 69 題題庫定義（所有 sampleSolution 已移至雲端隱藏工作表，前端絕不儲存答案）
+    // =========================================================================
     const UNITS = [
-      // -----------------------------------------------------------------------
-      // 單元 1：第2課 — 變數、輸出與算術運算 (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u1",
         lesson: "第2課：變數、輸出與算術運算",
@@ -529,14 +510,6 @@ ict = int(input())
 
 # 請在下方計算總分 total 與平均分 avg 並輸出
 `,
-            sampleSolution: `chi = int(input())
-eng = int(input())
-math = int(input())
-ict = int(input())
-total = chi + eng + math + ict
-avg = total / 4
-print("Total:", total)
-print("Average:", avg)`,
             hints: [
               "提示 1（變數計算）：使用 total = chi + eng + math + ict 計算總分，再用 total / 4 計算平均分。",
               "提示 2（字串與數字輸出）：使用 print(\"Total:\", total) 會自動在冒號與數字之間加上一個空格。",
@@ -564,11 +537,6 @@ paid = int(input())
 
 # 請計算找贖金額 change 並按格式輸出
 `,
-            sampleSolution: `price = int(input())
-qty = int(input())
-paid = int(input())
-change = paid - price * qty
-print("Change: $" + str(change))`,
             hints: [
               "提示 1（算術運算）：總貨款為 price * qty，找贖金額 change = paid - price * qty。",
               "提示 2（緊貼符號）：範例輸出中 $ 與數字之間沒有空格（如 $14），不可直接用逗號連接。",
@@ -595,11 +563,6 @@ h = int(input())
 
 # 請計算面積並輸出
 `,
-            sampleSolution: `a = int(input())
-b = int(input())
-h = int(input())
-area = (a + b) * h / 2
-print(area)`,
             hints: [
               "提示 1（運算優先次序）：乘除優於加減，必須用圓括號將 (a + b) 括起來。",
               "提示 2（乘號不可省略）：Python 中必須明確寫出乘號 *，即 (a + b) * h / 2。",
@@ -627,11 +590,6 @@ cakes = int(input())
 
 # 請計算總麵粉與總砂糖並輸出
 `,
-            sampleSolution: `flour = int(input())
-sugar = int(input())
-cakes = int(input())
-print("Flour: " + str(flour * cakes) + "g")
-print("Sugar: " + str(sugar * cakes) + "g")`,
             hints: [
               "提示 1（乘法計算）：總麵粉為 flour * cakes，總砂糖為 sugar * cakes。",
               "提示 2（單位緊貼數字）：數字與字母 g 之間沒有空格（例如 600g），需使用 str() 進行字串串聯。",
@@ -658,11 +616,6 @@ trips = int(input())
 
 # 請計算剩餘金額並輸出
 `,
-            sampleSolution: `balance = int(input())
-fare = int(input())
-trips = int(input())
-rem = balance - fare * trips
-print("Remaining: $" + str(rem))`,
             hints: [
               "提示 1（車費總支出）：總共扣除了 fare * trips 元。",
               "提示 2（剩餘金額）：最新餘額 rem = balance - fare * trips。",
@@ -686,9 +639,6 @@ print("Remaining: $" + str(rem))`,
 
 # 請計算折實加包裝費後的總額並輸出
 `,
-            sampleSolution: `price = int(input())
-final_price = price * 0.85 + 10
-print(final_price)`,
             hints: [
               "提示 1（折扣算式）：八五折等於乘以 0.85，即 price * 0.85。",
               "提示 2（加上包裝費）：總金額為 price * 0.85 + 10。",
@@ -714,10 +664,6 @@ mins = int(input())
 
 # 請計算配速並輸出
 `,
-            sampleSolution: `dist = int(input())
-mins = int(input())
-pace = mins / dist
-print("Pace:", pace, "min/km")`,
             hints: [
               "提示 1（除法方向）：每公里用時等於總時間除以距離，即 mins / dist。",
               "提示 2（多參數 print）：使用 print(\"Pace:\", pace, \"min/km\") 會自動在前後加上空格。",
@@ -744,13 +690,6 @@ h = int(input())
 
 # 請計算總水量與換水量並輸出
 `,
-            sampleSolution: `l = int(input())
-w = int(input())
-h = int(input())
-litres = l * w * h / 1000
-change = litres * 0.2
-print("Total Litres:", litres)
-print("Weekly Change:", change)`,
             hints: [
               "提示 1（體積換算公升）：長 × 闊 × 高除以 1000 即為公升數：litres = l * w * h / 1000。",
               "提示 2（換水量）：換水量為 litres * 0.2。",
@@ -763,10 +702,6 @@ print("Weekly Change:", change)`,
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 2：第2課 — 條件判斷 if / elif / else (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u2",
         lesson: "第2課：條件判斷 if / elif / else",
@@ -790,13 +725,6 @@ print("Weekly Change:", change)`,
 
 # 請使用 if / elif / else 判斷門票收費
 `,
-            sampleSolution: `age = int(input())
-if age < 3:
-    print("Free")
-elif age <= 11 or age >= 65:
-    print("$120")
-else:
-    print("$250")`,
             hints: [
               "提示 1（條件順序）：先用 if age < 3: 判斷免費幼兒，進入 elif 時年齡必定已經 >= 3。",
               "提示 2（優惠票條件）：在 elif 中使用 age <= 11 or age >= 65: 判斷小童及長者。",
@@ -827,13 +755,6 @@ else:
 
 # 請判斷並輸出運費
 `,
-            sampleSolution: `amount = int(input())
-if amount >= 300:
-    print("Free Shipping")
-elif amount >= 150:
-    print("$20")
-else:
-    print("$40")`,
             hints: [
               "提示 1（由高至低判斷）：先檢查 if amount >= 300: 輸出 \"Free Shipping\"。",
               "提示 2（善用 elif）：若第一個條件不成立，金額必小於 300，故第二個條件只需寫 elif amount >= 150:。",
@@ -863,13 +784,6 @@ else:
 
 # 請判斷停課安排並輸出
 `,
-            sampleSolution: `signal = int(input())
-if signal >= 8:
-    print("Classes Suspended")
-elif signal == 3:
-    print("Kindergarten Suspended")
-else:
-    print("Normal Classes")`,
             hints: [
               "提示 1（關係運算符）：「8 號或以上」寫成 signal >= 8；「等於 3」必須用雙等號 signal == 3。",
               "提示 2（三層分支）：使用 if / elif / else 結構。",
@@ -900,15 +814,6 @@ else:
 
 # 請輸出對應車費類別
 `,
-            sampleSolution: `age = int(input())
-if age < 3:
-    print("Free Ride")
-elif age <= 11:
-    print("Child Fare")
-elif age >= 65:
-    print("Senior $2")
-else:
-    print("Adult Fare")`,
             hints: [
               "提示 1（四層分支）：可使用 if / elif / elif / else 處理四種年齡層。",
               "提示 2（先排除幼童）：if age < 3 之後，elif age <= 11 即代表 3 至 11 歲。",
@@ -939,15 +844,6 @@ else:
 
 # 請判斷逾期罰款並輸出
 `,
-            sampleSolution: `days = int(input())
-if days <= 0:
-    print("No Fine")
-elif days <= 7:
-    print("$10")
-elif days <= 14:
-    print("$25")
-else:
-    print("Card Suspended")`,
             hints: [
               "提示 1（由小至大判斷）：先判斷 if days <= 0:，再依序用 elif days <= 7: 與 elif days <= 14:。",
               "提示 2（超過兩星期）：最後 else: 代表 15 天或以上，輸出 \"Card Suspended\"。",
@@ -978,15 +874,6 @@ else:
 
 # 請判斷空氣質素風險級別
 `,
-            sampleSolution: `aqhi = int(input())
-if aqhi <= 3:
-    print("Low")
-elif aqhi <= 6:
-    print("Moderate")
-elif aqhi == 7:
-    print("High")
-else:
-    print("Very High")`,
             hints: [
               "提示 1（分段區間）：依次用 aqhi <= 3、aqhi <= 6、aqhi == 7 劃分區間。",
               "提示 2（最高級別）：else 分支處理 8 至 10，輸出 \"Very High\"。",
@@ -1017,15 +904,6 @@ else:
 
 # 請輸出對應等級
 `,
-            sampleSolution: `score = int(input())
-if score >= 85:
-    print("Grade A")
-elif score >= 70:
-    print("Grade B")
-elif score >= 50:
-    print("Grade C")
-else:
-    print("Fail")`,
             hints: [
               "提示 1（由高分往低分檢查）：先寫 if score >= 85:，確保高分不會誤落入較低等級。",
               "提示 2（及格邊界）：elif score >= 50: 處理 50 至 69 分。",
@@ -1055,13 +933,6 @@ else:
 
 # 請判斷電影票價並輸出
 `,
-            sampleSolution: `hour = int(input())
-if hour < 12:
-    print("$45")
-elif hour <= 17:
-    print("$65")
-else:
-    print("$90")`,
             hints: [
               "提示 1（早場判斷）：if hour < 12: 輸出 \"$45\"。",
               "提示 2（下午場判斷）：elif hour <= 17: 包含 12 至 17 時，輸出 \"$65\"。",
@@ -1076,10 +947,6 @@ else:
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 3：第2課 — 邏輯運算符 and / or 改寫 (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u3",
         lesson: "第2課：邏輯運算符 and / or 改寫",
@@ -1098,11 +965,6 @@ else:
 
 # 請使用 and 運算符判斷應付金額 (50 或 0)
 `,
-            sampleSolution: `age = int(input())
-if age >= 12 and age <= 60:
-    print(50)
-else:
-    print(0)`,
             hints: [
               "提示 1（區間寫法）：用 and 連接兩個條件：age >= 12 and age <= 60。",
               "提示 2（輸出數值）：條件成立時輸出 50，else 分支輸出 0。",
@@ -1129,12 +991,6 @@ resident = input()
 
 # 請使用 and 判斷申請資格
 `,
-            sampleSolution: `age = int(input())
-resident = input()
-if age >= 12 and resident == "Y":
-    print("Approved")
-else:
-    print("Rejected")`,
             hints: [
               "提示 1（文字輸入）：resident 是文字字串，直接用 input() 讀取並與 \"Y\" 比較。",
               "提示 2（and 連接）：條件為 age >= 12 and resident == \"Y\"。",
@@ -1160,11 +1016,6 @@ else:
 
 # 請使用 or 運算符檢查安全身高
 `,
-            sampleSolution: `height = int(input())
-if height < 120 or height > 195:
-    print("Not Allowed")
-else:
-    print("Allowed")`,
             hints: [
               "提示 1（危險條件）：height < 120 or height > 195（剛好 120 和 195 是允許乘坐的）。",
               "提示 2（分支輸出）：成立時輸出 \"Not Allowed\"，else 輸出 \"Allowed\"。",
@@ -1191,12 +1042,6 @@ jump_cm = int(input())
 
 # 請使用 or 運算符判斷是否入選
 `,
-            sampleSolution: `run_sec = int(input())
-jump_cm = int(input())
-if run_sec <= 13 or jump_cm >= 450:
-    print("Selected")
-else:
-    print("Try Next Year")`,
             hints: [
               "提示 1（兩項達標其一）：時間越短越快，故 13 秒或以下為 run_sec <= 13；跳遠達標為 jump_cm >= 450。",
               "提示 2（or 運算符）：使用 if run_sec <= 13 or jump_cm >= 450:。",
@@ -1222,12 +1067,6 @@ rain = input()
 
 # 請判斷泳池是否開放
 `,
-            sampleSolution: `temp = int(input())
-rain = input()
-if temp >= 20 and rain == "No":
-    print("Pool Open")
-else:
-    print("Pool Closed")`,
             hints: [
               "提示 1（同時成立）：兩個條件必須同時滿足，使用 and 連接。",
               "提示 2（條件寫法）：temp >= 20 and rain == \"No\"。",
@@ -1253,12 +1092,6 @@ conduct = input()
 
 # 請判斷獎學金資格
 `,
-            sampleSolution: `avg = int(input())
-conduct = input()
-if avg >= 85 and conduct == "A":
-    print("Scholarship Awarded")
-else:
-    print("Not Eligible")`,
             hints: [
               "提示 1（條件組合）：avg >= 85 and conduct == \"A\"。",
               "提示 2（字串輸入）：conduct 不需轉換為整數，直接用 input() 讀取。",
@@ -1284,12 +1117,6 @@ pass_holder = input()
 
 # 請使用 or 運算符判斷是否免費
 `,
-            sampleSolution: `day = input()
-pass_holder = input()
-if day == "Wed" or pass_holder == "Y":
-    print("Free Entry")
-else:
-    print("Buy Ticket")`,
             hints: [
               "提示 1（兩個字串輸入）：兩行輸入皆為文字，直接用 input() 讀取即可。",
               "提示 2（or 邏輯）：滿足其中一項即免費，條件為 day == \"Wed\" or pass_holder == \"Y\"。",
@@ -1315,12 +1142,6 @@ vip = input()
 
 # 請結合 and 與 or 判斷免運費資格
 `,
-            sampleSolution: `total = int(input())
-vip = input()
-if total >= 500 or (vip == "Y" and total >= 200):
-    print("Free Delivery")
-else:
-    print("Standard Fee")`,
             hints: [
               "提示 1（複合條件）：兩種情況其一成立即可免運費，可用 or 連接兩組條件。",
               "提示 2（括號分組）：建議寫成 if total >= 500 or (vip == \"Y\" and total >= 200): 令邏輯更清晰。",
@@ -1334,10 +1155,6 @@ else:
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 4：第3課 — While 循環基礎計數與累積 (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u4",
         lesson: "第3課：While 循環基礎計數與累積",
@@ -1354,10 +1171,6 @@ else:
             starterCode: `x = 2
 # 請使用 while 循環輸出 2 至 10 的偶數
 `,
-            sampleSolution: `x = 2
-while x <= 10:
-    print(x)
-    x = x + 2`,
             hints: [
               "提示 1（循環條件）：初始值 x = 2，要包含 10，條件應設為 while x <= 10:。",
               "提示 2（步進更新）：在循環內先 print(x)，再執行 x = x + 2。",
@@ -1378,11 +1191,6 @@ while x <= 10:
             starterCode: `count = 5
 # 請使用 while 循環倒數並輸出 Lift off!
 `,
-            sampleSolution: `count = 5
-while count >= 1:
-    print(count)
-    count = count - 1
-print("Lift off!")`,
             hints: [
               "提示 1（倒數條件）：count = 5，當 count >= 1 時繼續循環。",
               "提示 2（每次減 1）：循環內執行 print(count) 及 count = count - 1。",
@@ -1404,12 +1212,6 @@ print("Lift off!")`,
 n = 3
 # 請使用 while 循環累加並輸出總和
 `,
-            sampleSolution: `total = 0
-n = 3
-while n <= 20:
-    total = total + n
-    n = n + 3
-print(total)`,
             hints: [
               "提示 1（循環條件）：while n <= 20:。",
               "提示 2（累加與更新）：循環內先執行 total = total + n，再執行 n = n + 3。",
@@ -1435,15 +1237,6 @@ days = 0
 
 # 請使用 while 循環計算所需天數並輸出
 `,
-            sampleSolution: `target = int(input())
-saved = 0
-daily = 10
-days = 0
-while saved < target:
-    saved = saved + daily
-    daily = daily + 5
-    days = days + 1
-print(days)`,
             hints: [
               "提示 1（循環條件）：只要累積儲蓄尚未達標（while saved < target:），就繼續下一天的儲蓄。",
               "提示 2（每日更新）：每天在循環內更新 saved = saved + daily、daily = daily + 5 及 days = days + 1。",
@@ -1470,13 +1263,6 @@ hours = 0
 
 # 請使用 while 循環計算倍增所需小時數
 `,
-            sampleSolution: `limit = int(input())
-cells = 1
-hours = 0
-while cells < limit:
-    cells = cells * 2
-    hours = hours + 1
-print(hours)`,
             hints: [
               "提示 1（循環條件）：當 cells < limit 時繼續倍增。",
               "提示 2（倍增更新）：循環內執行 cells = cells * 2 與 hours = hours + 1。",
@@ -1502,13 +1288,6 @@ total = 0
 
 # 請使用 while 循環累加奇數並輸出
 `,
-            sampleSolution: `max_num = int(input())
-i = 1
-total = 0
-while i <= max_num:
-    total = total + i
-    i = i + 2
-print(total)`,
             hints: [
               "提示 1（奇數序列）：i 由 1 開始，每次加 2（i = i + 2），條件為 while i <= max_num:。",
               "提示 2（累加總和）：在更新 i 之前先執行 total = total + i。",
@@ -1536,14 +1315,6 @@ mins = 0
 
 # 請使用 while 循環計算所需分鐘數
 `,
-            sampleSolution: `cap = int(input())
-rate = int(input())
-water = 0
-mins = 0
-while water < cap:
-    water = water + rate
-    mins = mins + 1
-print(mins)`,
             hints: [
               "提示 1（循環條件）：while water < cap:。",
               "提示 2（每分鐘增量）：water = water + rate，同時 mins = mins + 1。",
@@ -1568,11 +1339,6 @@ step = int(input())
 
 # 請使用 while 循環重複減去 step 並輸出最終 num
 `,
-            sampleSolution: `num = int(input())
-step = int(input())
-while num >= step:
-    num = num - step
-print(num)`,
             hints: [
               "提示 1（循環條件）：while num >= step:。",
               "提示 2（重複相減）：循環內執行 num = num - step。",
@@ -1585,10 +1351,6 @@ print(num)`,
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 5：第3課 — While 循環有效性檢驗 (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u5",
         lesson: "第3課：While 循環有效性檢驗 (Validation)",
@@ -1610,11 +1372,6 @@ print(num)`,
 
 # 請使用 while 循環驗證 num > 0
 `,
-            sampleSolution: `num = int(input())
-while num <= 0:
-    print("Invalid! Try again.")
-    num = int(input())
-print(num * num)`,
             hints: [
               "提示 1（無效條件）：while num <= 0:。",
               "提示 2（循環內重試）：輸出 \"Invalid! Try again.\" 後重新讀取 num = int(input())。",
@@ -1642,11 +1399,6 @@ print(num * num)`,
 
 # 請驗證分數是否介乎 0 至 100
 `,
-            sampleSolution: `score = int(input())
-while score < 0 or score > 100:
-    print("Out of range")
-    score = int(input())
-print("Score recorded:", score)`,
             hints: [
               "提示 1（無效範圍）：while score < 0 or score > 100:。",
               "提示 2（重讀輸入）：循環內輸出 \"Out of range\" 並再次執行 score = int(input())。",
@@ -1674,11 +1426,6 @@ print("Score recorded:", score)`,
 
 # 請使用 while 循環驗證密語
 `,
-            sampleSolution: `pwd = input()
-while pwd != "Python":
-    print("Wrong password")
-    pwd = input()
-print("Access granted!")`,
             hints: [
               "提示 1（字串比較）：密語為文字，用 input() 讀取並以 while pwd != \"Python\": 判斷。",
               "提示 2（循環重試）：輸出 \"Wrong password\" 後再次 pwd = input()。",
@@ -1705,11 +1452,6 @@ print("Access granted!")`,
 
 # 請驗證 num 是否為偶數
 `,
-            sampleSolution: `num = int(input())
-while num % 2 != 0:
-    print("Not even!")
-    num = int(input())
-print("Even accepted:", num)`,
             hints: [
               "提示 1（奇偶判斷）：奇數除以 2 的餘數不等於 0，即 num % 2 != 0。",
               "提示 2（重讀數據）：循環內輸出 \"Not even!\" 並重新執行 num = int(input())。",
@@ -1736,11 +1478,6 @@ print("Even accepted:", num)`,
 
 # 請驗證增值金額是否為 50 的正倍數
 `,
-            sampleSolution: `amt = int(input())
-while amt <= 0 or amt % 50 != 0:
-    print("Invalid amount")
-    amt = int(input())
-print("Added: $" + str(amt))`,
             hints: [
               "提示 1（無效條件）：小於或等於 0，或者不能被 50 整除（amt <= 0 or amt % 50 != 0）。",
               "提示 2（重讀輸入）：在 while 內輸出 \"Invalid amount\" 後重新讀取 amt = int(input())。",
@@ -1767,11 +1504,6 @@ print("Added: $" + str(amt))`,
 
 # 請驗證學號範圍並輸出確認訊息
 `,
-            sampleSolution: `seat = int(input())
-while seat < 1 or seat > 40:
-    print("Invalid seat number")
-    seat = int(input())
-print("Seat #" + str(seat) + " confirmed")`,
             hints: [
               "提示 1（無效條件）：while seat < 1 or seat > 40:。",
               "提示 2（井號緊貼學號）：注意 # 與學號之間沒有空格（例如 Seat #18 confirmed）。",
@@ -1799,11 +1531,6 @@ print("Seat #" + str(seat) + " confirmed")`,
 
 # 請驗證電梯載重是否安全
 `,
-            sampleSolution: `weight = int(input())
-while weight <= 0 or weight > 800:
-    print("Overload or Invalid")
-    weight = int(input())
-print("Door closing")`,
             hints: [
               "提示 1（無效條件）：while weight <= 0 or weight > 800:。",
               "提示 2（重複讀取）：超重時輸出提示並重新執行 weight = int(input())。",
@@ -1830,14 +1557,6 @@ print("Door closing")`,
 
 # 請先驗證輸入為 "Y" 或 "N"，再輸出結果
 `,
-            sampleSolution: `ans = input()
-while ans != "Y" and ans != "N":
-    print("Please enter Y or N")
-    ans = input()
-if ans == "Y":
-    print("Confirmed")
-else:
-    print("Cancelled")`,
             hints: [
               "提示 1（無效條件）：既不等於 \"Y\" 也不等於 \"N\"，要用 and 連接：while ans != \"Y\" and ans != \"N\":。",
               "提示 2（驗證通過後判斷）：跳出 while 後，用 if ans == \"Y\": 輸出 \"Confirmed\"，否則輸出 \"Cancelled\"。",
@@ -1850,10 +1569,6 @@ else:
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 6：第4課 — For 循環區間求和 (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u6",
         lesson: "第4課：For 循環區間求和",
@@ -1874,12 +1589,6 @@ total = 0
 
 # 請使用 for 循環計算總和並輸出
 `,
-            sampleSolution: `start = int(input())
-end = int(input())
-total = 0
-for i in range(start, end + 1):
-    total = total + i
-print(total)`,
             hints: [
               "提示 1（range 結束值）：range(start, end + 1) 才會包含 end 本身。",
               "提示 2（循環累加）：在循環內執行 total = total + i。",
@@ -1904,11 +1613,6 @@ total = 0
 
 # 請計算 1 至 n 的奇數總和
 `,
-            sampleSolution: `n = int(input())
-total = 0
-for i in range(1, n + 1, 2):
-    total = total + i
-print(total)`,
             hints: [
               "提示 1（步長設定）：range(1, n + 1, 2) 由 1 開始每次加 2。",
               "提示 2（累加）：在循環內執行 total = total + i。",
@@ -1934,11 +1638,6 @@ ans = 1
 
 # 請使用 for 循環計算 n 的階乘
 `,
-            sampleSolution: `n = int(input())
-ans = 1
-for i in range(1, n + 1):
-    ans = ans * i
-print(ans)`,
             hints: [
               "提示 1（連乘初始值）：ans 必須由 1 開始（不可為 0）。",
               "提示 2（循環範圍）：for i in range(1, n + 1):。",
@@ -1963,11 +1662,6 @@ total = 0
 
 # 請計算 2 至 n 的偶數總和
 `,
-            sampleSolution: `n = int(input())
-total = 0
-for i in range(2, n + 1, 2):
-    total = total + i
-print(total)`,
             hints: [
               "提示 1（偶數序列）：range(2, n + 1, 2) 會依序產生 2, 4, 6...。",
               "提示 2（累加）：total = total + i。",
@@ -1991,11 +1685,6 @@ total = 0
 
 # 請計算 1 到 n 的平方和
 `,
-            sampleSolution: `n = int(input())
-total = 0
-for i in range(1, n + 1):
-    total = total + i * i
-print(total)`,
             hints: [
               "提示 1（平方寫法）：i 的平方可寫成 i * i 或 i ** 2。",
               "提示 2（累加平方）：total = total + i * i。",
@@ -2020,12 +1709,6 @@ total = 0
 
 # 請用 for 循環讀取每件貨品價錢並累加
 `,
-            sampleSolution: `items = int(input())
-total = 0
-for i in range(items):
-    price = int(input())
-    total = total + price
-print("Total Bill: $" + str(total))`,
             hints: [
               "提示 1（循環次數）：for i in range(items): 會重複執行 items 次。",
               "提示 2（循環內讀取）：每次在循環內用 price = int(input()) 讀取一件貨品並加進 total。",
@@ -2049,11 +1732,6 @@ print("Total Bill: $" + str(total))`,
 
 # 請使用 for 循環讀取 7 天的步數並加總
 `,
-            sampleSolution: `total_steps = 0
-for day in range(7):
-    steps = int(input())
-    total_steps = total_steps + steps
-print("Weekly Steps:", total_steps)`,
             hints: [
               "提示 1（固定 7 次循環）：使用 for day in range(7):。",
               "提示 2（讀取與累加）：每次讀取 steps = int(input()) 並加進 total_steps。",
@@ -2077,11 +1755,6 @@ total = 0
 
 # 請計算 5 至 n 之間 5 的倍數總和
 `,
-            sampleSolution: `n = int(input())
-total = 0
-for i in range(5, n + 1, 5):
-    total = total + i
-print(total)`,
             hints: [
               "提示 1（步長 5）：range(5, n + 1, 5) 依序產生 5, 10, 15...。",
               "提示 2（累加）：total = total + i。",
@@ -2094,10 +1767,6 @@ print(total)`,
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 7：第4課 — For 循環步長與數列輸出 (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u7",
         lesson: "第4課：For 循環步長與數列輸出",
@@ -2116,8 +1785,6 @@ The cube of 3 is 27
             sampleOutput: "The cube of 1 is 1\nThe cube of 3 is 27\nThe cube of 5 is 125\nThe cube of 7 is 343\nThe cube of 9 is 729",
             starterCode: `# 請使用 for 循環輸出 1, 3, 5, 7, 9 的立方
 `,
-            sampleSolution: `for n in range(1, 10, 2):
-    print("The cube of", n, "is", n ** 3)`,
             hints: [
               "提示 1（奇數序列）：range(1, 10, 2) 會產生 1, 3, 5, 7, 9。",
               "提示 2（三次方）：n ** 3 代表 n 的立方。",
@@ -2144,9 +1811,6 @@ The cube of 3 is 27
 
 # 請輸出 m 的 1 至 5 乘法表
 `,
-            sampleSolution: `m = int(input())
-for i in range(1, 6):
-    print(m, "x", i, "=", m * i)`,
             hints: [
               "提示 1（循環範圍）：range(1, 6) 產生 1, 2, 3, 4, 5。",
               "提示 2（乘號字元）：題目要求小寫字母 \"x\"，不是 *。",
@@ -2167,8 +1831,6 @@ for i in range(1, 6):
             sampleOutput: "30\n25\n20\n15\n10",
             starterCode: `# 請使用負步長 range() 輸出 30 至 10
 `,
-            sampleSolution: `for n in range(30, 9, -5):
-    print(n)`,
             hints: [
               "提示 1（負步長）：range(30, stop, -5) 從 30 每次減 5。",
               "提示 2（包含 10）：stop 不會被輸出，故 stop 須設為小於 10 的數（如 9 或 5）。",
@@ -2192,10 +1854,6 @@ end_yr = int(input())
 
 # 請使用步長 4 輸出奧運年份
 `,
-            sampleSolution: `start_yr = int(input())
-end_yr = int(input())
-for yr in range(start_yr, end_yr + 1, 4):
-    print("Olympic Year:", yr)`,
             hints: [
               "提示 1（步長 4）：range(start_yr, end_yr + 1, 4)。",
               "提示 2（包含結束年）：end_yr + 1 確保最後一年也被輸出。",
@@ -2217,9 +1875,6 @@ for yr in range(start_yr, end_yr + 1, 4):
             sampleOutput: "0 C = 32.0 F\n10 C = 50.0 F\n20 C = 68.0 F\n30 C = 86.0 F\n40 C = 104.0 F",
             starterCode: `# 請輸出攝氏 0 至 40 度（每 10 度一格）的華氏對照表
 `,
-            sampleSolution: `for c in range(0, 41, 10):
-    f = c * 1.8 + 32
-    print(c, "C =", f, "F")`,
             hints: [
               "提示 1（步長 10）：range(0, 41, 10) 產生 0, 10, 20, 30, 40。",
               "提示 2（換算公式）：f = c * 1.8 + 32。",
@@ -2243,11 +1898,6 @@ n = int(input())
 
 # 請輸出等差數列的前 n 項
 `,
-            sampleSolution: `a = int(input())
-d = int(input())
-n = int(input())
-for i in range(n):
-    print(a + i * d)`,
             hints: [
               "提示 1（循環次數）：for i in range(n): 讓 i 依序取得 0, 1, ..., n-1。",
               "提示 2（第 i 項公式）：第 i 項數值等於 a + i * d。",
@@ -2270,9 +1920,6 @@ for i in range(n):
 
 # 請輸出 2 的 0 次方至 max_p 次方
 `,
-            sampleSolution: `max_p = int(input())
-for i in range(max_p + 1):
-    print("2 ^", i, "=", 2 ** i)`,
             hints: [
               "提示 1（從 0 開始）：range(max_p + 1) 會產生 0, 1, ..., max_p。",
               "提示 2（次方運算）：Python 中 2 的 i 次方寫成 2 ** i。",
@@ -2296,10 +1943,6 @@ for i in range(max_p + 1):
 
 # 請輸出 2, 4, 6, 8 件的九折總價
 `,
-            sampleSolution: `price = int(input())
-for qty in range(2, 9, 2):
-    cost = price * qty * 0.9
-    print(str(qty) + " pcs: $" + str(cost))`,
             hints: [
               "提示 1（數量序列）：range(2, 9, 2) 產生 2, 4, 6, 8。",
               "提示 2（九折總價）：cost = price * qty * 0.9。",
@@ -2312,10 +1955,6 @@ for qty in range(2, 9, 2):
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 8：第4課 — For 循環結合條件判斷 (8 題)
-      // -----------------------------------------------------------------------
       {
         unitId: "u8",
         lesson: "第4課：For 循環結合條件判斷",
@@ -2337,12 +1976,6 @@ for qty in range(2, 9, 2):
 
 # 請模擬 1 至 n 的「逢七拍手」遊戲
 `,
-            sampleSolution: `n = int(input())
-for i in range(1, n + 1):
-    if i % 7 == 0 or i % 10 == 7:
-        print("PAK!")
-    else:
-        print(i)`,
             hints: [
               "提示 1（倍數與個位數）：i % 7 == 0 判斷 7 的倍數；i % 10 == 7 判斷個位數是否為 7。",
               "提示 2（or 連接）：在 for i in range(1, n + 1): 內寫 if i % 7 == 0 or i % 10 == 7:。",
@@ -2377,15 +2010,6 @@ for i in range(1, n + 1):
             sampleOutput: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz",
             starterCode: `# 請輸出 1 至 15 的 FizzBuzz 序列
 `,
-            sampleSolution: `for i in range(1, 16):
-    if i % 3 == 0 and i % 5 == 0:
-        print("FizzBuzz")
-    elif i % 3 == 0:
-        print("Fizz")
-    elif i % 5 == 0:
-        print("Buzz")
-    else:
-        print(i)`,
             hints: [
               "提示 1（條件順序）：必須把 i % 3 == 0 and i % 5 == 0 放在第一個 if，否則 15 會被 3 的倍數先攔截。",
               "提示 2（elif 分支）：接著依序判斷 i % 3 == 0 與 i % 5 == 0。",
@@ -2413,13 +2037,6 @@ count = 0
 
 # 請統計及格人數並輸出
 `,
-            sampleSolution: `n = int(input())
-count = 0
-for i in range(n):
-    score = int(input())
-    if score >= 50:
-        count = count + 1
-print("Pass:", count)`,
             hints: [
               "提示 1（循環讀取）：for i in range(n): 內用 score = int(input()) 讀取每位同學分數。",
               "提示 2（條件計數）：if score >= 50: 時執行 count = count + 1。",
@@ -2442,12 +2059,6 @@ print("Pass:", count)`,
 
 # 請模擬 1 至 n 的逢三過關
 `,
-            sampleSolution: `n = int(input())
-for i in range(1, n + 1):
-    if i % 3 == 0:
-        print("CLAP")
-    else:
-        print(i)`,
             hints: [
               "提示 1（3 的倍數）：使用 i % 3 == 0 判斷是否能被 3 整除。",
               "提示 2（大寫輸出）：成立時輸出 \"CLAP\"。",
@@ -2473,17 +2084,6 @@ pass_cnt = 0
 
 # 請統計優異與及格人數
 `,
-            sampleSolution: `n = int(input())
-dist_cnt = 0
-pass_cnt = 0
-for i in range(n):
-    s = int(input())
-    if s >= 85:
-        dist_cnt = dist_cnt + 1
-    if s >= 50:
-        pass_cnt = pass_cnt + 1
-print("Distinction:", dist_cnt)
-print("Pass:", pass_cnt)`,
             hints: [
               "提示 1（獨立兩個 if）：因為 85 分以上同時也是及格，所以兩個條件要用兩個獨立的 if（不要用 elif）。",
               "提示 2（分別累加）：s >= 85 時 dist_cnt 加 1；s >= 50 時 pass_cnt 加 1。",
@@ -2508,15 +2108,6 @@ factors = 0
 
 # 請計算 num 的因數個數並判斷是否為質數
 `,
-            sampleSolution: `num = int(input())
-factors = 0
-for i in range(1, num + 1):
-    if num % i == 0:
-        factors = factors + 1
-if factors == 2:
-    print("Prime")
-else:
-    print("Composite")`,
             hints: [
               "提示 1（檢查整除）：用 for i in range(1, num + 1): 逐一測試 if num % i == 0:。",
               "提示 2（累計因數）：每找到一個因數，factors = factors + 1。",
@@ -2542,13 +2133,6 @@ hot = 0
 
 # 請統計 33 度或以上的日數
 `,
-            sampleSolution: `days = int(input())
-hot = 0
-for i in range(days):
-    t = int(input())
-    if t >= 33:
-        hot = hot + 1
-print("Hot Days:", hot)`,
             hints: [
               "提示 1（循環讀取）：for i in range(days): 內讀取每天氣溫 t = int(input())。",
               "提示 2（酷熱門檻）：if t >= 33: 時將 hot 加 1。",
@@ -2573,15 +2157,6 @@ found = 0
 
 # 請找出並輸出同時被 3 和 4 整除的數
 `,
-            sampleSolution: `a = int(input())
-b = int(input())
-found = 0
-for i in range(a, b + 1):
-    if i % 3 == 0 and i % 4 == 0:
-        print(i)
-        found = found + 1
-if found == 0:
-    print("None")`,
             hints: [
               "提示 1（雙重整除條件）：i % 3 == 0 and i % 4 == 0。",
               "提示 2（記錄找到次數）：每輸出一個符合的數字，就將 found = found + 1。",
@@ -2594,10 +2169,6 @@ if found == 0:
           }
         ]
       },
-
-      // -----------------------------------------------------------------------
-      // 單元 9：綜合性挑戰題（跨單元實戰應用，5 題）
-      // -----------------------------------------------------------------------
       {
         unitId: "u9",
         lesson: "第9單元：綜合性挑戰題",
@@ -2624,20 +2195,6 @@ if found == 0:
 # 2. 讀取 member = input()
 # 3. 計算分段收費與會員折扣並輸出
 `,
-            sampleSolution: `hours = int(input())
-while hours <= 0:
-    print("Invalid hours")
-    hours = int(input())
-member = input()
-if hours <= 2:
-    fee = hours * 20
-else:
-    fee = 2 * 20 + (hours - 2) * 15
-if member == "Y":
-    fee = fee - 10
-if fee < 0:
-    fee = 0
-print("Parking Fee: $" + str(fee))`,
             hints: [
               "提示 1（輸入驗證）：先用 while hours <= 0: 攔截無效時數，通過後才讀取 member = input()。",
               "提示 2（分段收費）：若 hours <= 2，費用為 hours * 20；否則為 40 + (hours - 2) * 15。",
@@ -2672,23 +2229,6 @@ highest = -1
 
 # 請讀取 n 個分數，計算平均分、最高分及班級獎項
 `,
-            sampleSolution: `n = int(input())
-total = 0
-highest = -1
-for i in range(n):
-    s = int(input())
-    total = total + s
-    if s > highest:
-        highest = s
-avg = total / n
-print("Average:", avg)
-print("Highest:", highest)
-if avg >= 80 and highest >= 95:
-    print("Class Award: Gold")
-elif avg >= 65:
-    print("Class Award: Silver")
-else:
-    print("Class Award: Standard")`,
             hints: [
               "提示 1（更新最高分）：在 for 循環內，每次讀取 s 後檢查 if s > highest: highest = s。",
               "提示 2（計算平均分）：循環結束後計算 avg = total / n。",
@@ -2722,18 +2262,6 @@ paid = 0
 
 # 請使用 while 循環處理投幣與找贖
 `,
-            sampleSolution: `code = int(input())
-if code == 1:
-    price = 8
-else:
-    price = 12
-paid = 0
-while paid < price:
-    coin = int(input())
-    paid = paid + coin
-    if paid < price:
-        print("Need more: $" + str(price - paid))
-print("Dispensing... Change: $" + str(paid - price))`,
             hints: [
               "提示 1（循環條件）：while paid < price: 期間不斷讀取 coin = int(input()) 並加進 paid。",
               "提示 2（尚欠提示）：投幣後若 paid < price 仍然成立，輸出 \"Need more: $\" + str(price - paid)。",
@@ -2762,18 +2290,6 @@ unlocked = False
 
 # 請實作最多 3 次嘗試的門鎖驗證
 `,
-            sampleSolution: `attempts = 0
-unlocked = False
-while attempts < 3 and not unlocked:
-    pwd = input()
-    attempts = attempts + 1
-    if pwd == "YY2-2026":
-        print("Unlocked!")
-        unlocked = True
-    elif attempts < 3:
-        print("Wrong! Attempts left:", 3 - attempts)
-    else:
-        print("Account Locked!")`,
             hints: [
               "提示 1（布爾旗標）：可用 unlocked = False 配合 while attempts < 3 and not unlocked: 控制循環。",
               "提示 2（三次狀態分流）：輸入正確設 unlocked = True；錯誤且 attempts < 3 顯示剩餘次數 3 - attempts；否則輸出鎖定訊息。",
@@ -2807,24 +2323,6 @@ fb_cnt = 0
 
 # 請完成報數輸出與統計摘要
 `,
-            sampleSolution: `start = int(input())
-end = int(input())
-f_cnt = 0
-b_cnt = 0
-fb_cnt = 0
-for i in range(start, end + 1):
-    if i % 3 == 0 and i % 5 == 0:
-        print("FizzBuzz")
-        fb_cnt = fb_cnt + 1
-    elif i % 3 == 0:
-        print("Fizz")
-        f_cnt = f_cnt + 1
-    elif i % 5 == 0:
-        print("Buzz")
-        b_cnt = b_cnt + 1
-    else:
-        print(i)
-print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + str(fb_cnt))`,
             hints: [
               "提示 1（優先順序）：先檢查 i % 3 == 0 and i % 5 == 0，避免 15 的倍數被拆開計算。",
               "提示 2（同步計數）：在每個輸出分支內，把對應的計數器（fb_cnt / f_cnt / b_cnt）加 1。",
@@ -2852,7 +2350,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     );
 
     // =========================================================================
-    // 2. 全域狀態、本地快取與 Google Sheets 雙向雲端同步（已修正暫存重複與覆蓋問題）
+    // 3. 全域狀態（純記憶體狀態，登入與排行榜完全由雲端 Google Sheets 驅動）
     // =========================================================================
     let currentProblemIndex = 0;
     let currentFilter = 'all';
@@ -2860,270 +2358,16 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     let pyodideInstance = null;
     let pyodideReady = false;
 
-    let currentStudent = null; // { classId: '3A', number: 1, key: '3A-01' }
-    // Map of problemId -> { solved: boolean, skipped: boolean, attempts: number, code: string }
+    // 登入狀態：{ classId: '3A', number: 1, key: '3A-01', password: '...', summary: {...} }
+    let currentStudent = null;
+    // Map of problemId -> { solved: boolean, skipped: boolean, attempts: number, code: string, sampleSolution: string | null }
     let studentProgress = {};
-    // Map of studentKey -> { studentKey, classId, number, solvedCount, skippedCount, totalAttempts, problems, updatedAt }
-    let allStudentsLeaderboard = {};
+    // 雲端排行榜陣列
+    let cloudLeaderboardList = [];
     let leaderboardClassFilter = 'ALL';
-    let pendingTeacherAction = null;
-    let isPushingToCloud = false;
-
-    const LOCAL_ALL_RECORDS_KEY = 'yy2_s3_python_all_students_v5';
-    const LOCAL_CURRENT_USER_KEY = 'yy2_s3_python_current_student_v5';
-    const VALID_CLASSES = ['3A', '3B', '3C', '3D', '3E'];
-
-    // 統一標準化 studentKey（例如 "3A-1" 統一轉為 "3A-01"）
-    function normalizeStudentKey(classId, number) {
-      const cls = String(classId || '').trim().toUpperCase();
-      const num = parseInt(number, 10);
-      if (!VALID_CLASSES.includes(cls) || isNaN(num) || num < 1 || num > 40) return null;
-      return `${cls}-${String(num).padStart(2, '0')}`;
-    }
-
-    // 清除舊版本的 localStorage 與 cookies 暫存，避免舊快取與 Google Sheets 資料重複
-    function clearLegacyStorageAndCookies() {
-      ['v1', 'v2', 'v3', 'v4'].forEach((v) => {
-        localStorage.removeItem(`yy2_s3_python_all_students_${v}`);
-        localStorage.removeItem(`yy2_s3_python_current_student_${v}`);
-      });
-      // 清除所有同網域下的舊 cookies 暫存
-      if (typeof document !== 'undefined' && document.cookie) {
-        document.cookie.split(';').forEach((c) => {
-          const eqPos = c.indexOf('=');
-          const name = eqPos > -1 ? c.substr(0, eqPos).trim() : c.trim();
-          if (name) {
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-          }
-        });
-      }
-    }
-
-    // 標準化單筆學生紀錄物件，確保欄位格式統一並重新計算完成題數
-    function normalizeRecordObject(rec) {
-      if (!rec) return null;
-      const normKey = normalizeStudentKey(rec.classId, rec.number);
-      if (!normKey) return null;
-
-      let probs = rec.problems || {};
-      if (typeof probs === 'string') {
-        try { probs = JSON.parse(probs); } catch (e) { probs = {}; }
-      }
-
-      let solvedCount = 0;
-      let skippedCount = 0;
-      let totalAttempts = 0;
-      const cleanProblems = {};
-
-      ALL_PROBLEMS.forEach((p) => {
-        const item = probs[p.id];
-        if (item) {
-          const isSkipped = Boolean(item.skipped);
-          const isSolved = !isSkipped && Boolean(item.solved);
-          const attempts = Number(item.attempts) || 0;
-          if (isSolved) solvedCount++;
-          if (isSkipped) skippedCount++;
-          totalAttempts += attempts;
-          cleanProblems[p.id] = {
-            solved: isSolved,
-            skipped: isSkipped,
-            attempts: attempts,
-            code: item.code || ''
-          };
-        }
-      });
-
-      const hasDetailedProblems = Object.keys(cleanProblems).length > 0;
-      return {
-        studentKey: normKey,
-        classId: normKey.split('-')[0],
-        number: parseInt(rec.number, 10),
-        solvedCount: hasDetailedProblems ? solvedCount : (Number(rec.solvedCount) || 0),
-        skippedCount: hasDetailedProblems ? skippedCount : (Number(rec.skippedCount) || 0),
-        totalAttempts: hasDetailedProblems ? totalAttempts : (Number(rec.totalAttempts) || 0),
-        problems: cleanProblems,
-        updatedAt: Number(rec.updatedAt) || 0
-      };
-    }
-
-    function loadLocalAllRecords() {
-      clearLegacyStorageAndCookies();
-      try {
-        const raw = localStorage.getItem(LOCAL_ALL_RECORDS_KEY);
-        if (!raw) {
-          allStudentsLeaderboard = {};
-          return;
-        }
-        const parsed = JSON.parse(raw);
-        const cleaned = {};
-        Object.values(parsed).forEach((rec) => {
-          const normRec = normalizeRecordObject(rec);
-          if (normRec) {
-            if (!cleaned[normRec.studentKey] || normRec.updatedAt >= cleaned[normRec.studentKey].updatedAt) {
-              cleaned[normRec.studentKey] = normRec;
-            }
-          }
-        });
-        allStudentsLeaderboard = cleaned;
-        saveLocalAllRecords();
-      } catch (e) {
-        allStudentsLeaderboard = {};
-      }
-    }
-
-    function saveLocalAllRecords() {
-      try {
-        localStorage.setItem(LOCAL_ALL_RECORDS_KEY, JSON.stringify(allStudentsLeaderboard));
-      } catch (e) {
-        console.warn("LocalStorage save failed", e);
-      }
-    }
-
-    // 從 Google Sheets 拉取全級最新成績與作答記錄，並以去重後的雲端資料完全取代舊快取
-    async function syncFromGoogleSheets(silent = true) {
-      if (!GOOGLE_SHEETS_API_URL || isPushingToCloud) return;
-      const badge = document.getElementById('syncStatusBadge');
-      try {
-        if (badge) {
-          badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-medium";
-          badge.innerHTML = '<i class="fa-solid fa-rotate fa-spin mr-1"></i>正在同步雲端資料...';
-        }
-        const res = await fetch(GOOGLE_SHEETS_API_URL + "?t=" + Date.now(), { cache: "no-store" });
-        const data = await res.json();
-        if (data && data.status === 'ok' && data.records) {
-          const freshRecords = {};
-
-          // 1. 解析並標準化所有 Google Sheets 雲端紀錄（依標準化 studentKey 去重）
-          Object.values(data.records).forEach((remoteRaw) => {
-            const normRec = normalizeRecordObject(remoteRaw);
-            if (!normRec) return;
-            if (!freshRecords[normRec.studentKey] || normRec.updatedAt >= freshRecords[normRec.studentKey].updatedAt) {
-              freshRecords[normRec.studentKey] = normRec;
-            }
-          });
-
-          // 2. 僅保留本地確實剛提交且尚未寫入雲端的新紀錄，避免舊本地快取殘留重複
-          Object.keys(allStudentsLeaderboard).forEach((k) => {
-            const localRec = normalizeRecordObject(allStudentsLeaderboard[k]);
-            if (!localRec) return;
-            const remoteRec = freshRecords[localRec.studentKey];
-            if (localRec.totalAttempts > 0 && (!remoteRec || localRec.updatedAt > remoteRec.updatedAt)) {
-              freshRecords[localRec.studentKey] = localRec;
-            }
-          });
-
-          // 3. 完全取代舊快取並寫回 localStorage，杜絕重複顯示
-          allStudentsLeaderboard = freshRecords;
-          saveLocalAllRecords();
-
-          // 若當前學生已登入，同步更新其個人進度與編輯器草稿
-          if (currentStudent && allStudentsLeaderboard[currentStudent.key]) {
-            const myRemote = allStudentsLeaderboard[currentStudent.key];
-            if (myRemote.problems) {
-              studentProgress = JSON.parse(JSON.stringify(myRemote.problems));
-              updateStudentStatsUI();
-              renderSidebar();
-              updateCurrentProblemBadges();
-              const curProb = ALL_PROBLEMS[currentProblemIndex];
-              if (studentProgress[curProb.id] && studentProgress[curProb.id].code) {
-                const editor = document.getElementById('codeEditor');
-                if (editor.value.trim() === curProb.starterCode.trim()) {
-                  editor.value = studentProgress[curProb.id].code;
-                  updateLineNumbers();
-                }
-              }
-            }
-          }
-
-          if (!document.getElementById('leaderboardModal').classList.contains('hidden')) {
-            renderLeaderboardTable();
-          }
-        }
-        if (badge) {
-          badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium";
-          badge.innerHTML = '<i class="fa-solid fa-cloud-check mr-1"></i>Google Sheets 已同步';
-        }
-      } catch (err) {
-        console.warn("Google Sheets 讀取失敗，暫時使用本地快取：", err);
-        if (badge) {
-          badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 font-medium";
-          badge.innerHTML = '<i class="fa-solid fa-database mr-1"></i>離線快取模式';
-        }
-        if (!silent) showToast("雲端連線逾時，目前顯示本機快取紀錄", "warning");
-      }
-    }
-
-    // 將單一學生最新成績推送至 Google Sheets
-    async function pushRecordToGoogleSheets(record) {
-      if (!GOOGLE_SHEETS_API_URL || !record) return;
-      const badge = document.getElementById('syncStatusBadge');
-      isPushingToCloud = true;
-      try {
-        if (badge) {
-          badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-medium";
-          badge.innerHTML = '<i class="fa-solid fa-cloud-arrow-up fa-fade mr-1"></i>正在上傳成績...';
-        }
-        await fetch(GOOGLE_SHEETS_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "upsert", record: record })
-        });
-        if (badge) {
-          badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium";
-          badge.innerHTML = '<i class="fa-solid fa-cloud-check mr-1"></i>Google Sheets 已同步';
-        }
-      } catch (err) {
-        console.warn("推送成績至 Google Sheets 失敗：", err);
-        if (badge) {
-          badge.className = "text-[11px] px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 font-medium";
-          badge.innerHTML = '<i class="fa-solid fa-database mr-1"></i>已存於本機（待同步）';
-        }
-      } finally {
-        isPushingToCloud = false;
-      }
-    }
-
-    function persistStudentRecord() {
-      if (!currentStudent) return;
-
-      let solvedCount = 0;
-      let skippedCount = 0;
-      let totalAttempts = 0;
-      const problemsSummary = {};
-
-      ALL_PROBLEMS.forEach((p) => {
-        const rec = studentProgress[p.id] || { solved: false, skipped: false, attempts: 0, code: '' };
-        const isSkipped = !!rec.skipped;
-        const isSolved = !isSkipped && !!rec.solved; // Skip 題目絕不計入完成
-        if (isSolved) solvedCount++;
-        if (isSkipped) skippedCount++;
-        totalAttempts += (rec.attempts || 0);
-        problemsSummary[p.id] = {
-          solved: isSolved,
-          skipped: isSkipped,
-          attempts: rec.attempts || 0,
-          code: rec.code || ''
-        };
-      });
-
-      const updatedRecord = {
-        studentKey: currentStudent.key,
-        classId: currentStudent.classId,
-        number: currentStudent.number,
-        solvedCount,
-        skippedCount,
-        totalAttempts,
-        problems: problemsSummary,
-        updatedAt: Date.now()
-      };
-
-      allStudentsLeaderboard[currentStudent.key] = updatedRecord;
-      saveLocalAllRecords();
-      pushRecordToGoogleSheets(updatedRecord);
-    }
 
     // =========================================================================
-    // 3. 初始化 Python 3 直譯器 (Pyodide + 內建快速備援)
+    // 4. 初始化 Python 3 直譯器 (Pyodide + 內建快速備援)
     // =========================================================================
     async function initPythonEngine() {
       const badge = document.getElementById('pyodideStatusBadge');
@@ -3146,7 +2390,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     }
 
     // =========================================================================
-    // 4. 學生登入（連接 Google Sheets Students 密碼驗證）與進度 UI 更新
+    // 5. 學生雲端密碼登入與個人進度載入
     // =========================================================================
     function populateStudentDropdowns() {
       const numSelect = document.getElementById('numberSelect');
@@ -3156,129 +2400,94 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
         opt.textContent = `${i} 號`;
         numSelect.appendChild(opt);
       }
-
-      try {
-        const savedUser = localStorage.getItem(LOCAL_CURRENT_USER_KEY);
-        if (savedUser) {
-          const parsed = JSON.parse(savedUser);
-          if (parsed.classId && parsed.number && parsed.verified && VALID_CLASSES.includes(parsed.classId)) {
-            document.getElementById('classSelect').value = parsed.classId;
-            document.getElementById('numberSelect').value = parsed.number;
-            applyStudentSession(parsed.classId, parseInt(parsed.number, 10), false);
-          }
-        }
-      } catch (e) {}
     }
 
-    window.handleStudentLogin = async function () {
+    window.handleStudentLogin = async function (event) {
+      if (event) event.preventDefault();
+
       const classId = document.getElementById('classSelect').value;
       const numVal = document.getElementById('numberSelect').value;
-      const pwdInput = document.getElementById('studentPasswordInput');
-      const password = pwdInput.value.trim();
+      const pwdVal = document.getElementById('studentPasswordInput').value.trim();
 
       if (!classId || !numVal) {
         showToast("請先選擇你的「班別」及「學號」！", "warning");
         return;
       }
-      if (!password) {
+      if (!pwdVal) {
         showToast("請輸入你的個人登入密碼！", "warning");
-        pwdInput.focus();
+        document.getElementById('studentPasswordInput').focus();
         return;
       }
 
-      const number = parseInt(numVal, 10);
-      const paddedNum = String(number).padStart(2, '0');
-      const studentKey = `${classId}-${paddedNum}`;
-
       const loginBtn = document.getElementById('loginBtn');
-      const origBtnText = loginBtn.textContent;
       loginBtn.disabled = true;
-      loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+      loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>驗證中</span>';
 
       try {
-        const res = await fetch(GOOGLE_SHEETS_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "login",
-            studentKey: studentKey,
-            password: password
-          })
+        const res = await callBackendAPI({
+          action: "login",
+          classId: classId,
+          number: parseInt(numVal, 10),
+          password: pwdVal
         });
-        const data = await res.json();
 
-        if (data && data.status === 'ok') {
-          pwdInput.value = '';
-          applyStudentSession(classId, number, true);
-        } else if (data && data.status === 'wrong_password') {
-          showToast("登入密碼錯誤，請檢查後重新輸入！", "error");
-          pwdInput.select();
-          pwdInput.focus();
-        } else if (data && data.status === 'not_found') {
-          showToast(`Google Sheets 找不到 ${studentKey} 的帳號紀錄，請聯絡老師。`, "error");
-        } else {
-          showToast("驗證失敗：" + (data.message || "請稍後再試"), "error");
+        if (!res.success) {
+          showToast(res.message || "登入失敗，請檢查班別、學號及密碼！", "error");
+          document.getElementById('studentPasswordInput').select();
+          return;
         }
+
+        // 登入成功，同時保存總表摘要 (summary) 與逐題明細 (progress)
+        currentStudent = {
+          classId: res.student.classId,
+          number: res.student.number,
+          key: res.student.key,
+          password: pwdVal,
+          summary: res.summary || { solvedCount: 0, skippedCount: 0, totalAttempts: 0 }
+        };
+        studentProgress = res.progress || {};
+
+        document.getElementById('loginReminderBanner').classList.add('hidden');
+        const statsBox = document.getElementById('studentStatsBox');
+        statsBox.classList.remove('hidden');
+        statsBox.classList.add('flex');
+        loginBtn.innerHTML = '<span>切換</span>';
+
+        updateStudentStatsUI();
+        renderSidebar();
+        loadProblem(currentProblemIndex);
+
+        showToast(`登入成功！歡迎 ${currentStudent.classId} 班 ${currentStudent.number} 號同學，已載入你的雲端進度。`, "success");
       } catch (err) {
-        console.error("Login fetch error:", err);
-        showToast("無法連接 Google Sheets 驗證伺服器，請檢查網絡連線！", "error");
+        showToast("連線雲端伺服器失敗，請檢查網絡後重試：" + err.message, "error");
+        loginBtn.innerHTML = '<span>登入</span>';
       } finally {
         loginBtn.disabled = false;
-        loginBtn.textContent = currentStudent ? '切換' : origBtnText;
       }
     };
-
-    async function applyStudentSession(classId, number, notify) {
-      const paddedNum = String(number).padStart(2, '0');
-      const key = `${classId}-${paddedNum}`;
-      currentStudent = { classId, number, key, verified: true };
-
-      localStorage.setItem(LOCAL_CURRENT_USER_KEY, JSON.stringify(currentStudent));
-
-      const existing = allStudentsLeaderboard[key];
-      studentProgress = {};
-      if (existing && existing.problems) {
-        studentProgress = JSON.parse(JSON.stringify(existing.problems));
-      }
-
-      document.getElementById('loginReminderBanner').classList.add('hidden');
-      const statsBox = document.getElementById('studentStatsBox');
-      statsBox.classList.remove('hidden');
-      statsBox.classList.add('flex');
-      document.getElementById('loginBtn').textContent = '切換';
-
-      updateStudentStatsUI();
-      renderSidebar();
-      loadProblem(currentProblemIndex);
-
-      if (notify) {
-        showToast(`驗證成功！歡迎 ${classId} 班 ${number} 號同學。`, "success");
-      }
-
-      // 先向 Google Sheets 同步最新雲端資料，確認沒有雲端紀錄才建立初始空白紀錄
-      await syncFromGoogleSheets(true);
-      if (allStudentsLeaderboard[key] && allStudentsLeaderboard[key].problems) {
-        studentProgress = JSON.parse(JSON.stringify(allStudentsLeaderboard[key].problems));
-      } else if (!allStudentsLeaderboard[key]) {
-        persistStudentRecord();
-      }
-
-      updateStudentStatsUI();
-      renderSidebar();
-      loadProblem(currentProblemIndex);
-    }
 
     function updateStudentStatsUI() {
       if (!currentStudent) return;
       let solved = 0;
       let attempts = 0;
-      ALL_PROBLEMS.forEach((p) => {
-        const rec = studentProgress[p.id];
-        if (rec) {
-          if (rec.solved && !rec.skipped) solved++;
-          attempts += (rec.attempts || 0);
-        }
-      });
+      const hasProgressRecords = Object.keys(studentProgress).length > 0;
+
+      if (hasProgressRecords) {
+        ALL_PROBLEMS.forEach((p) => {
+          const rec = studentProgress[p.id];
+          if (rec) {
+            if (rec.solved && !rec.skipped) solved++;
+            attempts += (rec.attempts || 0);
+          }
+        });
+      }
+
+      // 若總表摘要數字高於目前讀取到的明細（例如手動修改過 Students 總表），以總表摘要為準
+      if (currentStudent.summary) {
+        solved = Math.max(solved, Number(currentStudent.summary.solvedCount) || 0);
+        attempts = Math.max(attempts, Number(currentStudent.summary.totalAttempts) || 0);
+      }
+
       const rate = Math.round((solved / ALL_PROBLEMS.length) * 100);
       document.getElementById('statSolved').textContent = `${solved}/${ALL_PROBLEMS.length}`;
       document.getElementById('statAttempts').textContent = `${attempts} 次`;
@@ -3286,7 +2495,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     }
 
     // =========================================================================
-    // 5. 題庫渲染、切換與隱藏式 Skip 參考答案顯示邏輯
+    // 6. 題庫渲染、切換與雲端動態解鎖 Skip 參考答案顯示邏輯
     // =========================================================================
     function renderSidebar() {
       const container = document.getElementById('problemListContainer');
@@ -3419,19 +2628,17 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
 
     function updateCurrentProblemBadges() {
       const prob = ALL_PROBLEMS[currentProblemIndex];
-      const rec = studentProgress[prob.id] || { solved: false, skipped: false, attempts: 0 };
+      const rec = studentProgress[prob.id] || { solved: false, skipped: false, attempts: 0, sampleSolution: null };
 
-      // 僅顯示純粹的累計嘗試次數，不透露任何上限
       document.getElementById('probAttemptBadge').textContent = `累計嘗試：${rec.attempts || 0} 次`;
 
       const statusBadge = document.getElementById('probStatusBadge');
       const answerCard = document.getElementById('revealedAnswerCard');
 
-      if (rec.skipped) {
+      if (rec.skipped && rec.sampleSolution) {
         statusBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300";
         statusBadge.innerHTML = '<i class="fa-solid fa-forward mr-1"></i>Skip（不計入完成）';
-        // 僅在已觸發 Skip 後才顯示參考答案卡片
-        document.getElementById('revealedAnswerCode').textContent = prob.sampleSolution;
+        document.getElementById('revealedAnswerCode').textContent = rec.sampleSolution;
         answerCard.classList.remove('hidden');
       } else if (rec.solved) {
         statusBadge.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300";
@@ -3447,8 +2654,8 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     window.applySampleSolution = function () {
       const prob = ALL_PROBLEMS[currentProblemIndex];
       const rec = studentProgress[prob.id];
-      if (!rec || !rec.skipped) return;
-      document.getElementById('codeEditor').value = prob.sampleSolution;
+      if (!rec || !rec.skipped || !rec.sampleSolution) return;
+      document.getElementById('codeEditor').value = rec.sampleSolution;
       updateLineNumbers();
       saveCurrentEditorDraft();
       showToast("已將參考程式套用至編輯器，你可按「執行並批改」測試運行效果。", "info");
@@ -3500,7 +2707,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
       const prob = ALL_PROBLEMS[currentProblemIndex];
       const code = document.getElementById('codeEditor').value;
       if (!studentProgress[prob.id]) {
-        studentProgress[prob.id] = { solved: false, skipped: false, attempts: 0, code };
+        studentProgress[prob.id] = { solved: false, skipped: false, attempts: 0, code, sampleSolution: null };
       } else {
         studentProgress[prob.id].code = code;
       }
@@ -3518,7 +2725,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     };
 
     // =========================================================================
-    // 6. 程式碼編輯器行號同步與 Tab 鍵自動縮排
+    // 7. 程式碼編輯器行號同步與 Tab 鍵自動縮排
     // =========================================================================
     const codeEditorEl = document.getElementById('codeEditor');
     const lineNumbersEl = document.getElementById('lineNumbers');
@@ -3562,7 +2769,7 @@ print("Summary: Fizz=" + str(f_cnt) + ", Buzz=" + str(b_cnt) + ", FizzBuzz=" + s
     });
 
     // =========================================================================
-    // 7. Python 執行與自動批改引擎
+    // 8. Python 執行、自動批改與雲端提交同步
     // =========================================================================
     async function executePythonWithInputs(userCode, inputStr) {
       const inputs = inputStr ? inputStr.split('\n') : [];
@@ -3784,7 +2991,7 @@ finally:
 
     window.runAndGradeCode = async function () {
       if (!currentStudent) {
-        showToast("請先於右上角選擇「班別」、「學號」並輸入密碼登入！", "warning");
+        showToast("請先於右上角選擇「班別」、「學號」並輸入「密碼」登入！", "warning");
         document.getElementById('classSelect').focus();
         return;
       }
@@ -3796,13 +3003,7 @@ finally:
       const summaryPill = document.getElementById('gradeSummaryPill');
 
       runBtn.disabled = true;
-      runBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>批改中...</span>';
-
-      if (!studentProgress[prob.id]) {
-        studentProgress[prob.id] = { solved: false, skipped: false, attempts: 0, code: userCode };
-      }
-      studentProgress[prob.id].attempts += 1;
-      studentProgress[prob.id].code = userCode;
+      runBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>批改並同步...</span>';
 
       let passedCount = 0;
       const resultsHTML = [];
@@ -3853,36 +3054,62 @@ finally:
         `);
       }
 
+      consoleArea.innerHTML = resultsHTML.join('');
       const allPassed = passedCount === prob.testCases.length;
-      const rec = studentProgress[prob.id];
 
-      if (allPassed) {
-        if (rec.skipped) {
-          summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300";
-          summaryPill.innerHTML = `<i class="fa-solid fa-forward mr-1"></i>已通過測試（狀態維持 Skip）`;
-          showToast("程式輸出正確！此題已標記為 Skip，不計入已完成題數。", "info");
+      // 將本次批改結果安全傳送至 Google Sheets 後端，由後端紀錄次數並決定是否解鎖參考解答
+      try {
+        const syncRes = await callBackendAPI({
+          action: "submitAttempt",
+          classId: currentStudent.classId,
+          number: currentStudent.number,
+          password: currentStudent.password,
+          problemId: prob.id,
+          passedAll: allPassed,
+          code: userCode
+        });
+
+        if (!syncRes.success) {
+          showToast(syncRes.message || "雲端紀錄同步失敗", "error");
         } else {
-          rec.solved = true;
-          summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300";
-          summaryPill.innerHTML = `<i class="fa-solid fa-trophy text-amber-500 mr-1"></i>全部通過 (${passedCount}/${prob.testCases.length})`;
-          showToast(`恭喜通過「${prob.title}」！進度已同步至雲端排行榜。`, "success");
+          const pState = syncRes.problemState;
+          studentProgress[prob.id] = {
+            solved: pState.solved,
+            skipped: pState.skipped,
+            attempts: pState.attempts,
+            code: userCode,
+            sampleSolution: pState.sampleSolution || null
+          };
+          if (syncRes.summary) {
+            currentStudent.summary = syncRes.summary;
+          }
+
+          if (allPassed) {
+            if (pState.skipped) {
+              summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300";
+              summaryPill.innerHTML = `<i class="fa-solid fa-forward mr-1"></i>已通過測試（狀態維持 Skip）`;
+              showToast("程式輸出正確！此題已標記為 Skip，不計入已完成題數。", "info");
+            } else {
+              summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300";
+              summaryPill.innerHTML = `<i class="fa-solid fa-trophy text-amber-500 mr-1"></i>全部通過 (${passedCount}/${prob.testCases.length})`;
+              showToast(`恭喜通過「${prob.title}」！成績已同步至 Google Sheets 排行榜。`, "success");
+            }
+          } else {
+            if (pState.skipped && pState.sampleSolution) {
+              summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300";
+              summaryPill.textContent = `已標記為 Skip（已從雲端解鎖參考程式）`;
+              showToast("系統已從雲端為你解鎖本題的參考程式，並將此題標記為 Skip。", "warning");
+            } else {
+              summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300";
+              summaryPill.textContent = `通過 ${passedCount} / ${prob.testCases.length} 組測試`;
+              showToast(`尚未完全通過（${passedCount}/${prob.testCases.length}），請檢查輸出格式或點擊提示按鈕！`, "error");
+            }
+          }
         }
-      } else {
-        if (!rec.solved && !rec.skipped && rec.attempts > SKIP_THRESHOLD) {
-          rec.skipped = true;
-          summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-orange-100 text-orange-800 border border-orange-300";
-          summaryPill.textContent = `已標記為 Skip（已解鎖參考程式）`;
-          showToast("系統已為你解鎖本題的參考程式，並將此題標記為 Skip。", "warning");
-        } else {
-          summaryPill.className = "text-xs font-bold px-3 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300";
-          summaryPill.textContent = `通過 ${passedCount} / ${prob.testCases.length} 組測試`;
-          showToast(`尚未完全通過（${passedCount}/${prob.testCases.length}），請檢查輸出格式或點擊提示按鈕！`, "error");
-        }
+      } catch (err) {
+        showToast("雲端同步發生錯誤：" + err.message, "error");
       }
 
-      consoleArea.innerHTML = resultsHTML.join('');
-
-      persistStudentRecord();
       updateCurrentProblemBadges();
       updateStudentStatsUI();
       renderSidebar();
@@ -3899,16 +3126,55 @@ finally:
     }
 
     // =========================================================================
-    // 8. 全級排行榜
+    // 9. 全級排行榜（連接 Google Sheets，並清除舊暫存避免重複顯示）
     // =========================================================================
-    window.openLeaderboard = function () {
+    window.openLeaderboard = async function () {
+      purgeLegacyBrowserCache();
       document.getElementById('leaderboardModal').classList.remove('hidden');
-      renderLeaderboardTable();
-      syncFromGoogleSheets(false);
+      await refreshLeaderboardFromCloud(false);
     };
 
     window.closeLeaderboard = function () {
       document.getElementById('leaderboardModal').classList.add('hidden');
+    };
+
+    window.refreshLeaderboardFromCloud = async function (notify) {
+      const tbody = document.getElementById('leaderboardTableBody');
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="py-10 text-center text-slate-500">
+            <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-600 mb-2 block"></i>
+            正在從 Google Sheets 同步最新全級排行榜資料...
+          </td>
+        </tr>
+      `;
+
+      try {
+        purgeLegacyBrowserCache();
+        const res = await callBackendAPI({ action: "getLeaderboard" });
+        if (res.success && Array.isArray(res.leaderboard)) {
+          const uniqueMap = new Map();
+          res.leaderboard.forEach((item) => {
+            uniqueMap.set(item.studentKey, item);
+          });
+          cloudLeaderboardList = Array.from(uniqueMap.values());
+          renderLeaderboardTable();
+          if (notify) {
+            showToast("已從 Google Sheets 同步最新排行榜！", "success");
+          }
+        } else {
+          throw new Error(res.message || "無法取得排行榜資料");
+        }
+      } catch (err) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-10 text-center text-rose-600">
+              <i class="fa-solid fa-triangle-exclamation text-2xl mb-2 block"></i>
+              同步失敗：${escapeHtml(err.message)}
+            </td>
+          </tr>
+        `;
+      }
     };
 
     window.filterLeaderboard = function (classFilter) {
@@ -3924,18 +3190,7 @@ finally:
     };
 
     function getSortedLeaderboardList() {
-      // 雙重去重保護：依據標準化後的 studentKey（如 3A-01）保留最新一筆，確保排行榜絕無重複學生
-      const dedupMap = new Map();
-      Object.values(allStudentsLeaderboard).forEach((item) => {
-        const normRec = normalizeRecordObject(item);
-        if (!normRec) return;
-        const existing = dedupMap.get(normRec.studentKey);
-        if (!existing || normRec.updatedAt >= existing.updatedAt) {
-          dedupMap.set(normRec.studentKey, normRec);
-        }
-      });
-
-      let list = Array.from(dedupMap.values());
+      let list = [...cloudLeaderboardList];
       if (leaderboardClassFilter !== 'ALL') {
         list = list.filter(item => item.classId === leaderboardClassFilter);
       }
@@ -3951,14 +3206,14 @@ finally:
     function renderLeaderboardTable() {
       const tbody = document.getElementById('leaderboardTableBody');
       const list = getSortedLeaderboardList();
-      document.getElementById('leaderboardCountInfo').textContent = `共 ${list.length} 位學生紀錄`;
+      document.getElementById('leaderboardCountInfo').textContent = `共 ${list.length} 位學生紀錄（雲端即時同步）`;
 
       if (list.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="7" class="py-10 text-center text-slate-400">
               <i class="fa-solid fa-users-slash text-2xl mb-2 block"></i>
-              目前尚無學生紀錄，請登入班別與學號並開始提交程式碼！
+              目前雲端尚無學生作答紀錄，請登入班別、學號與密碼並開始提交程式碼！
             </td>
           </tr>
         `;
@@ -3975,15 +3230,13 @@ finally:
         const isMe = currentStudent && st.studentKey === currentStudent.key;
         const pct = Math.round((st.solvedCount / ALL_PROBLEMS.length) * 100);
         const skipCnt = st.skippedCount || 0;
-        const timeStr = st.updatedAt
-          ? new Date(st.updatedAt).toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-          : '-';
+        const timeStr = st.updatedAt || '-';
 
         return `
           <tr class="${isMe ? 'bg-indigo-50/80 font-semibold' : 'hover:bg-slate-50'} transition">
             <td class="py-3 px-4 text-center">${rankBadge}</td>
             <td class="py-3 px-4">
-              <span class="px-2 py-0.5 rounded bg-slate-200/70 text-slate-800 text-xs font-bold">${st.classId}</span>
+              <span class="px-2 py-0.5 rounded bg-slate-200/70 text-slate-800 text-xs font-bold">${escapeHtml(st.classId)}</span>
             </td>
             <td class="py-3 px-4">
               ${st.number} 號
@@ -4001,128 +3254,16 @@ finally:
               ${skipCnt > 0 ? `<span class="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-xs font-bold">${skipCnt}</span>` : '<span class="text-slate-400 text-xs">0</span>'}
             </td>
             <td class="py-3 px-4 text-center font-mono-code text-slate-700">${st.totalAttempts}</td>
-            <td class="py-3 px-4 text-right text-xs text-slate-400">${timeStr}</td>
+            <td class="py-3 px-4 text-right text-xs text-slate-400">${escapeHtml(timeStr)}</td>
           </tr>
         `;
       }).join('');
     }
 
-    window.requestTeacherAuth = function (actionType) {
-      pendingTeacherAction = actionType;
-      const titleEl = document.getElementById('teacherModalTitle');
-      const descEl = document.getElementById('teacherModalDesc');
-      const confirmBtn = document.getElementById('teacherConfirmBtn');
-
-      if (actionType === 'export') {
-        titleEl.textContent = "匯出全級成績 CSV（教師驗證）";
-        descEl.textContent = "請輸入教師密碼以匯出所有學生的完成題數、Skip 題數與嘗試次數 CSV 報表：";
-        confirmBtn.className = "px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold shadow transition";
-        confirmBtn.textContent = "驗證並匯出";
-      } else {
-        titleEl.textContent = "清除所有學生紀錄（教師驗證）";
-        descEl.textContent = "警告：此操作將永久清空本機及 Google Sheets 雲端的所有學生作答進度與排行榜紀錄。請輸入教師密碼以確認執行：";
-        confirmBtn.className = "px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-bold shadow transition";
-        confirmBtn.textContent = "驗證並清除";
-      }
-
-      const inputEl = document.getElementById('teacherPasswordInput');
-      inputEl.value = '';
-      document.getElementById('teacherPasswordError').classList.add('hidden');
-      document.getElementById('teacherPasswordModal').classList.remove('hidden');
-      setTimeout(() => inputEl.focus(), 50);
-    };
-
-    window.closeTeacherModal = function () {
-      document.getElementById('teacherPasswordModal').classList.add('hidden');
-      pendingTeacherAction = null;
-    };
-
-    window.submitTeacherPassword = function (event) {
-      event.preventDefault();
-      const pwd = document.getElementById('teacherPasswordInput').value;
-      const errEl = document.getElementById('teacherPasswordError');
-
-      
-      
-
-      errEl.classList.add('hidden');
-      const action = pendingTeacherAction;
-      closeTeacherModal();
-
-      if (action === 'export') {
-        executeExportLeaderboardCSV();
-      } else if (action === 'clear') {
-        executeClearAllRecords();
-      }
-    };
-
-    function executeExportLeaderboardCSV() {
-      const list = getSortedLeaderboardList();
-      if (list.length === 0) {
-        showToast("目前沒有可匯出的成績資料", "warning");
-        return;
-      }
-      const headers = [
-        "名次",
-        "班別",
-        "學號",
-        "已完成題數",
-        "Skip題數",
-        "總題數",
-        "總嘗試次數",
-        ...ALL_PROBLEMS.map(p => `${p.id}(狀態/嘗試)`)
-      ];
-      const rows = list.map((st, idx) => {
-        const probCols = ALL_PROBLEMS.map(p => {
-          const rec = (st.problems && st.problems[p.id]) || { solved: false, skipped: false, attempts: 0 };
-          const stLabel = rec.skipped ? 'Skip' : (rec.solved ? '完成' : '未完成');
-          return `${stLabel}(${rec.attempts})`;
-        });
-        return [idx + 1, st.classId, st.number, st.solvedCount, st.skippedCount || 0, ALL_PROBLEMS.length, st.totalAttempts, ...probCols];
-      });
-
-      const csvContent = "\uFEFF" + [headers, ...rows].map(r => r.join(",")).join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `中三Python練習成績表_${new Date().toISOString().slice(0, 10)}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("教師驗證通過，已成功匯出 CSV 成績表！", "success");
-    }
-
-    async function executeClearAllRecords() {
-      allStudentsLeaderboard = {};
-      studentProgress = {};
-      localStorage.removeItem(LOCAL_ALL_RECORDS_KEY);
-      clearLegacyStorageAndCookies();
-
-      if (GOOGLE_SHEETS_API_URL) {
-        try {
-          await fetch(GOOGLE_SHEETS_API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "clear" })
-          });
-        } catch (e) {
-          console.warn("清除 Google Sheets 失敗：", e);
-        }
-      }
-
-      if (currentStudent) {
-        persistStudentRecord();
-      }
-
-      updateStudentStatsUI();
-      renderSidebar();
-      loadProblem(currentProblemIndex);
-      renderLeaderboardTable();
-      showToast("教師驗證通過，已清除本機與 Google Sheets 的所有學生紀錄！", "success");
-    }
+    
 
     // =========================================================================
-    // 9. Toast 提示通知輔助函數
+    // 10. Toast 提示通知輔助函數
     // =========================================================================
     function showToast(message, type = "info") {
       const container = document.getElementById('toastContainer');
@@ -4155,13 +3296,12 @@ finally:
     // 啟動應用程式
     // =========================================================================
     window.addEventListener('DOMContentLoaded', () => {
-      loadLocalAllRecords();
+      purgeLegacyBrowserCache();
       populateStudentDropdowns();
       renderSidebar();
       loadProblem(0);
       initPythonEngine();
-      syncFromGoogleSheets(true);
     });
   </script>
 </body>
-</html> 
+</html>
